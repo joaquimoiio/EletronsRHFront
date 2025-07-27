@@ -1,23 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Obter ID do evento da URL
-    const eventoId = getEventoIdFromURL();
-    
-    if (!eventoId) {
-        showErrorState();
-        return;
-    }
-    
-    // Configurar eventos
-    setupEventListeners();
-    
-    // Carregar dados do evento
-    loadEventoDetails(eventoId);
-    loadGaleria(eventoId);
+    // Incluir o config.js
+    loadScript('../js/config.js').then(() => {
+        // Obter ID do evento da URL
+        const eventoId = getEventoIdFromURL();
+        
+        if (!eventoId) {
+            showErrorState();
+            return;
+        }
+        
+        // Configurar eventos
+        setupEventListeners();
+        
+        // Carregar dados do evento
+        loadEventoDetails(eventoId);
+        loadGaleria(eventoId);
+    });
 });
 
 let currentEvento = null;
 let imagens = [];
 let currentImageIndex = 0;
+
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
 
 function getEventoIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -58,13 +71,7 @@ function setupEventListeners() {
 
 async function loadEventoDetails(eventoId) {
     try {
-        const response = await fetch(`/api/eventos/${eventoId}`);
-        
-        if (!response.ok) {
-            throw new Error('Evento não encontrado');
-        }
-        
-        currentEvento = await response.json();
+        currentEvento = await ApiUtils.get(`/eventos/${eventoId}`);
         displayEventoDetails(currentEvento);
         
     } catch (error) {
@@ -95,7 +102,7 @@ function displayEventoDetails(evento) {
     // Mostrar imagem de capa se existir
     if (evento.imagemCapa) {
         const eventoCapa = document.getElementById('evento-capa');
-        eventoCapa.src = `/uploads/${evento.imagemCapa}`;
+        eventoCapa.src = ApiUtils.getUploadUrl(evento.imagemCapa);
         eventoCapa.classList.remove('hidden');
         document.getElementById('placeholder-capa').style.display = 'none';
     }
@@ -117,15 +124,7 @@ function formatDescription(description) {
 
 async function loadGaleria(eventoId) {
     try {
-        const response = await fetch(`/api/eventos/${eventoId}/imagens`);
-        
-        if (!response.ok) {
-            console.warn('Erro ao carregar galeria, mas evento existe');
-            imagens = [];
-        } else {
-            imagens = await response.json();
-        }
-        
+        imagens = await ApiUtils.get(`/eventos/${eventoId}/imagens`);
         displayGaleria();
         updateImagensCount();
         
@@ -163,7 +162,7 @@ function createGaleriaItem(imagem, index) {
     div.onclick = () => openImageModal(index);
     
     div.innerHTML = `
-        <img src="/uploads/${imagem.caminhoArquivo}" alt="${escapeHtml(imagem.nomeArquivo)}" loading="lazy">
+        <img src="${ApiUtils.getUploadUrl(imagem.caminhoArquivo)}" alt="${escapeHtml(imagem.nomeArquivo)}" loading="lazy">
         <div class="galeria-overlay">
             <span>🔍</span>
         </div>
@@ -212,7 +211,7 @@ function navigateImage(direction) {
 function updateModalImage() {
     if (currentImageIndex >= 0 && currentImageIndex < imagens.length) {
         const imagem = imagens[currentImageIndex];
-        document.getElementById('modal-image').src = `/uploads/${imagem.caminhoArquivo}`;
+        document.getElementById('modal-image').src = ApiUtils.getUploadUrl(imagem.caminhoArquivo);
     }
 }
 

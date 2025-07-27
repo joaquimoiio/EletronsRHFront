@@ -1,18 +1,31 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Obter ID da vaga da URL
-    const vagaId = getVagaIdFromURL();
-    
-    if (!vagaId) {
-        showErrorState();
-        return;
-    }
-    
-    // Configurar eventos
-    setupEventListeners();
-    
-    // Carregar dados da vaga
-    loadVagaDetails(vagaId);
+    // Incluir o config.js
+    loadScript('../js/config.js').then(() => {
+        // Obter ID da vaga da URL
+        const vagaId = getVagaIdFromURL();
+        
+        if (!vagaId) {
+            showErrorState();
+            return;
+        }
+        
+        // Configurar eventos
+        setupEventListeners();
+        
+        // Carregar dados da vaga
+        loadVagaDetails(vagaId);
+    });
 });
+
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
 
 function getVagaIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -29,13 +42,7 @@ function setupEventListeners() {
 
 async function loadVagaDetails(vagaId) {
     try {
-        const response = await fetch(`/api/vagas/${vagaId}`);
-        
-        if (!response.ok) {
-            throw new Error('Vaga não encontrada');
-        }
-        
-        const vaga = await response.json();
+        const vaga = await ApiUtils.get(`/vagas/${vagaId}`);
         displayVagaDetails(vaga);
         
     } catch (error) {
@@ -118,15 +125,7 @@ async function handleCandidaturaSubmit(e) {
         candidaturaData.append('curriculo', curriculo);
         candidaturaData.append('vagaId', vagaId);
         
-        const response = await fetch('/api/candidaturas', {
-            method: 'POST',
-            body: candidaturaData
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao enviar candidatura');
-        }
+        const response = await ApiUtils.postFormData('/candidaturas', candidaturaData);
         
         // Sucesso
         showMessage('Candidatura enviada com sucesso! Entraremos em contato em breve.', 'success');
