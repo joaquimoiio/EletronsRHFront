@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Evento - Sistema RH</title>
+    <link href="../css/editarEvento.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH</h1>
+                <nav class="nav">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="areas.html" class="nav-link">Áreas</a>
+                    <a href="vagas.html" class="nav-link">Vagas</a>
+                    <a href="eventos.html" class="nav-link active">Eventos</a>
+                    <button id="logout-btn" class="logout-btn">Sair</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="eventos.html">Eventos</a>
+                <span>/</span>
+                <span>Editar Evento</span>
+            </div>
+
+            <div class="page-header">
+                <h2 id="page-title">Carregando...</h2>
+                <p>Edite as informações do evento e gerencie a galeria de imagens</p>
+            </div>
+
+            <div id="message" class="message hidden"></div>
+
+            <div id="loading" class="loading">
+                Carregando dados do evento...
+            </div>
+
+            <div id="content" class="content-grid hidden">
+                <div class="form-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Informações do Evento</h3>
+                        </div>
+                        <form id="evento-form" class="evento-form">
+                            <input type="hidden" id="evento-id">
+                            
+                            <div class="input-group">
+                                <label for="evento-titulo">Título do Evento</label>
+                                <input type="text" id="evento-titulo" name="titulo" required readonly>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="evento-descricao">Descrição</label>
+                                <textarea id="evento-descricao" name="descricao" rows="8" 
+                                          placeholder="Descreva o evento em detalhes..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn">Salvar Descrição</button>
+                        </form>
+                    </div>
+
+                    <div class="galeria-section">
+                        <div class="galeria-header">
+                            <h4>Galeria de Imagens</h4>
+                        </div>
+                        
+                        <div class="upload-section">
+                            <div class="upload-area" id="upload-area">
+                                <div class="upload-icon">📷</div>
+                                <div class="upload-text">Arraste imagens aqui ou clique para selecionar</div>
+                                <button type="button" class="upload-btn" id="select-files">Selecionar Imagens</button>
+                                <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
+                                <div class="file-help">Formatos aceitos: JPG, PNG, GIF (máx. 5MB cada)</div>
+                            </div>
+                        </div>
+                        
+                        <div id="galeria-loading" class="loading">
+                            Carregando galeria...
+                        </div>
+
+                        <div id="galeria-grid" class="galeria-grid hidden">
+                            <!-- Imagens serão carregadas aqui -->
+                        </div>
+
+                        <div id="empty-galeria" class="empty-galeria hidden">
+                            <p>Nenhuma imagem adicionada ainda.</p>
+                            <p>Use a área de upload acima para adicionar fotos do evento.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="evento-info">
+                        <h4>Informações Gerais</h4>
+                        <div id="imagem-capa-container">
+                            <img id="imagem-capa" class="imagem-capa" src="" alt="Imagem de capa" style="display: none;">
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Título:</span>
+                            <span id="info-titulo" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Criado em:</span>
+                            <span id="info-data" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Imagens:</span>
+                            <span id="info-imagens" class="info-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para visualizar imagem -->
+    <div id="image-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Visualizar Imagem</h3>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <img id="modal-image" class="modal-image" src="" alt="Imagem do evento">
+        </div>
+    </div>
+
+    <script src="../js/editarEvento.js"></script>
+</body>
+</html>
