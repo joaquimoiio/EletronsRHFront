@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos Corporativos - Sistema RH</title>
+    <link href="../css/eventos.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH</h1>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Início</a>
+                    <a href="vagas.html" class="nav-link">Vagas</a>
+                    <a href="eventos.html" class="nav-link active">Eventos</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-hero">
+            <div class="container">
+                <h2>Eventos Corporativos</h2>
+                <p>Acompanhe os eventos e atividades da nossa empresa</p>
+            </div>
+        </section>
+
+        <section class="eventos-section">
+            <div class="container">
+                <div id="loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando eventos...</p>
+                </div>
+
+                <div id="eventos-grid" class="eventos-grid hidden">
+                    <!-- Eventos serão carregados aqui -->
+                </div>
+
+                <div id="empty-state" class="empty-state hidden">
+                    <div class="empty-icon">🎉</div>
+                    <h3>Nenhum evento disponível</h3>
+                    <p>Não há eventos corporativos programados no momento. Volte em breve para conferir as novidades!</p>
+                    <a href="index.html" class="btn-secondary">Voltar ao Início</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sistema RH. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../js/eventos.js"></script>
+</body>
+</html>

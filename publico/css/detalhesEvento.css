@@ -1,0 +1,501 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+    color: #2d3748;
+    background: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.header {
+    background: #1a365d;
+    color: #fff;
+    padding: 15px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: normal;
+    color: #d69e2e;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.nav-link {
+    color: #cbd5e0;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.nav-link:hover {
+    background: #2a5298;
+    color: #fff;
+}
+
+.loading {
+    text-align: center;
+    padding: 80px 20px;
+    color: #4a5568;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #d69e2e;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.evento-header {
+    background: linear-gradient(135deg, #faf089 0%, #f6e05e 100%);
+    padding: 60px 0;
+}
+
+.breadcrumb {
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #1a365d;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    color: #4a5568;
+    margin: 0 8px;
+}
+
+.evento-title-section {
+    text-align: center;
+}
+
+.evento-title {
+    font-size: 42px;
+    color: #1a365d;
+    font-weight: normal;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.evento-meta {
+    color: #4a5568;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.evento-capa {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    display: block;
+}
+
+.placeholder-capa {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a0aec0;
+    font-size: 80px;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+.evento-details {
+    padding: 60px 0;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 60px;
+}
+
+.evento-description {
+    background: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.evento-description h2 {
+    color: #1a365d;
+    font-size: 28px;
+    margin-bottom: 25px;
+    font-weight: normal;
+}
+
+.description-content {
+    color: #2d3748;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.description-content p {
+    margin-bottom: 20px;
+}
+
+.description-content p:last-child {
+    margin-bottom: 0;
+}
+
+.evento-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.evento-info {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-top: 4px solid #d69e2e;
+}
+
+.evento-info h3 {
+    color: #1a365d;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.info-value {
+    color: #2d3748;
+    font-weight: 500;
+    text-align: right;
+}
+
+.galeria-section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.galeria-header {
+    padding: 30px 30px 0;
+}
+
+.galeria-header h3 {
+    color: #1a365d;
+    font-size: 20px;
+    margin: 0;
+    font-weight: normal;
+}
+
+.galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    padding: 20px 30px 30px;
+}
+
+.galeria-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.galeria-item:hover {
+    transform: scale(1.05);
+}
+
+.galeria-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.galeria-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    color: #fff;
+    font-size: 24px;
+}
+
+.galeria-item:hover .galeria-overlay {
+    opacity: 1;
+}
+
+.empty-galeria {
+    padding: 40px 30px;
+    text-align: center;
+    color: #4a5568;
+}
+
+.empty-galeria p {
+    margin: 0;
+    font-style: italic;
+}
+
+.error-state {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.error-content {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.error-icon {
+    font-size: 80px;
+    margin-bottom: 30px;
+    opacity: 0.5;
+}
+
+.error-content h2 {
+    color: #1a365d;
+    font-size: 32px;
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+
+.error-content p {
+    color: #4a5568;
+    margin-bottom: 30px;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #1a365d;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 16px;
+    border: 2px solid #1a365d;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #1a365d;
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer {
+    background: #2d3748;
+    color: #cbd5e0;
+    padding: 30px 0;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    position: relative;
+}
+
+.modal-image {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.close-modal {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.close-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.modal-nav:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.modal-prev {
+    left: -50px;
+}
+
+.modal-next {
+    right: -50px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .evento-title {
+        font-size: 28px;
+    }
+    
+    .evento-capa,
+    .placeholder-capa {
+        height: 200px;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .evento-sidebar {
+        order: -1;
+    }
+    
+    .evento-description,
+    .evento-info {
+        padding: 25px;
+    }
+    
+    .galeria-header {
+        padding: 25px 25px 0;
+    }
+    
+    .galeria-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+        padding: 15px 25px 25px;
+    }
+    
+    .galeria-item img {
+        height: 80px;
+    }
+    
+    .modal-nav {
+        position: static;
+        margin: 10px 5px 0;
+    }
+    
+    .close-modal {
+        position: static;
+        margin-bottom: 10px;
+    }
+}

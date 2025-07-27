@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Evento - Sistema RH</title>
+    <link href="../css/detalhesEvento.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH</h1>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Início</a>
+                    <a href="vagas.html" class="nav-link">Vagas</a>
+                    <a href="eventos.html" class="nav-link">Eventos</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Carregando detalhes do evento...</p>
+        </div>
+
+        <div id="evento-content" class="evento-content hidden">
+            <section class="evento-header">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <a href="eventos.html">Eventos</a>
+                        <span>/</span>
+                        <span id="breadcrumb-title">Carregando...</span>
+                    </div>
+                    
+                    <div class="evento-title-section">
+                        <h1 id="evento-titulo">Carregando...</h1>
+                        <div class="evento-meta">
+                            <span id="evento-data">Carregando...</span>
+                        </div>
+                        
+                        <div id="evento-capa-container">
+                            <img id="evento-capa" class="evento-capa hidden" src="" alt="Imagem do evento">
+                            <div id="placeholder-capa" class="placeholder-capa">🎉</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="evento-details">
+                <div class="container">
+                    <div class="details-grid">
+                        <div class="evento-description">
+                            <h2>Sobre o Evento</h2>
+                            <div id="evento-descricao" class="description-content">
+                                Carregando descrição...
+                            </div>
+                        </div>
+
+                        <div class="evento-sidebar">
+                            <div class="evento-info">
+                                <h3>Informações</h3>
+                                <div class="info-item">
+                                    <span class="info-label">Data de Criação:</span>
+                                    <span id="info-data" class="info-value">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Galeria:</span>
+                                    <span id="info-imagens" class="info-value">- fotos</span>
+                                </div>
+                            </div>
+
+                            <div class="galeria-section">
+                                <div class="galeria-header">
+                                    <h3>Galeria de Fotos</h3>
+                                </div>
+                                
+                                <div id="galeria-grid" class="galeria-grid">
+                                    <!-- Imagens serão carregadas aqui -->
+                                </div>
+
+                                <div id="empty-galeria" class="empty-galeria hidden">
+                                    <p>Nenhuma foto disponível para este evento.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="error-state" class="error-state hidden">
+            <div class="container">
+                <div class="error-content">
+                    <div class="error-icon">❌</div>
+                    <h2>Evento não encontrado</h2>
+                    <p>O evento que você está procurando não foi encontrado ou não está mais disponível.</p>
+                    <a href="eventos.html" class="btn-secondary">Ver Outros Eventos</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sistema RH. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal para visualizar imagens -->
+    <div id="image-modal" class="modal hidden">
+        <div class="modal-content">
+            <button id="close-modal" class="close-modal">&times;</button>
+            <button id="prev-image" class="modal-nav modal-prev">‹</button>
+            <img id="modal-image" class="modal-image" src="" alt="Imagem do evento">
+            <button id="next-image" class="modal-nav modal-next">›</button>
+        </div>
+    </div>
+
+    <script src="../js/detalhesEvento.js"></script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+    color: #2d3748;
+    background: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.header {
+    background: #1a365d;
+    color: #fff;
+    padding: 15px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: normal;
+    color: #d69e2e;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.nav-link {
+    color: #cbd5e0;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: #2a5298;
+    color: #fff;
+}
+
+.page-hero {
+    background: linear-gradient(135deg, #faf089 0%, #f6e05e 100%);
+    padding: 60px 0;
+    text-align: center;
+}
+
+.page-hero h2 {
+    font-size: 36px;
+    color: #1a365d;
+    margin-bottom: 15px;
+    font-weight: normal;
+}
+
+.page-hero p {
+    font-size: 18px;
+    color: #4a5568;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.eventos-section {
+    padding: 60px 0;
+}
+
+.loading {
+    text-align: center;
+    padding: 80px 20px;
+    color: #4a5568;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #d69e2e;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.eventos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.evento-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-top: 4px solid #d69e2e;
+}
+
+.evento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.evento-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    background: #f7fafc;
+}
+
+.placeholder-image {
+    width: 100%;
+    height: 250px;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a0aec0;
+    font-size: 64px;
+}
+
+.evento-content {
+    padding: 25px;
+}
+
+.evento-header {
+    margin-bottom: 15px;
+}
+
+.evento-title {
+    font-size: 22px;
+    color: #1a365d;
+    margin: 0 0 8px 0;
+    font-weight: normal;
+    line-height: 1.3;
+}
+
+.evento-date {
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.evento-description {
+    color: #4a5568;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.evento-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.evento-btn {
+    background: #1a365d;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.evento-btn:hover {
+    background: #2a5298;
+    text-decoration: none;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 100px 20px;
+    color: #4a5568;
+}
+
+.empty-icon {
+    font-size: 80px;
+    margin-bottom: 30px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 28px;
+    color: #1a365d;
+    margin-bottom: 15px;
+    font-weight: normal;
+}
+
+.empty-state p {
+    font-size: 16px;
+    margin-bottom: 30px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #1a365d;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 16px;
+    border: 2px solid #1a365d;
+    transition: all 0.2s ease;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #1a365d;
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer {
+    background: #2d3748;
+    color: #cbd5e0;
+    padding: 30px 0;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .page-hero h2 {
+        font-size: 28px;
+    }
+    
+    .eventos-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .evento-content {
+        padding: 20px;
+    }
+    
+    .evento-title {
+        font-size: 20px;
+    }
+    
+    .evento-footer {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .evento-btn {
+        text-align: center;
+    }
+}
