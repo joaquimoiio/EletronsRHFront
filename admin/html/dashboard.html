@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema RH</title>
+    <link href="../css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH</h1>
+                <div class="user-menu">
+                    <span class="welcome">Olá, <span id="username">Admin</span></span>
+                    <button id="logout-btn" class="logout-btn">Sair</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="page-title">
+                <h2>Painel Administrativo</h2>
+                <p>Gerencie as informações do sistema de RH</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-areas">-</div>
+                    <div class="stat-label">Áreas Cadastradas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-vagas">-</div>
+                    <div class="stat-label">Vagas Ativas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-candidatos">-</div>
+                    <div class="stat-label">Candidatos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-eventos">-</div>
+                    <div class="stat-label">Eventos</div>
+                </div>
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-card">
+                    <h3>Áreas da Empresa</h3>
+                    <p>Cadastre e gerencie as áreas da sua empresa</p>
+                    <a href="areas.html" class="action-btn">Gerenciar Áreas</a>
+                </div>
+
+                <div class="action-card">
+                    <h3>Vagas de Emprego</h3>
+                    <p>Publique vagas e acompanhe candidaturas</p>
+                    <a href="vagas.html" class="action-btn">Gerenciar Vagas</a>
+                </div>
+
+                <div class="action-card">
+                    <h3>Eventos Corporativos</h3>
+                    <p>Crie e divulgue eventos da empresa</p>
+                    <a href="eventos.html" class="action-btn">Gerenciar Eventos</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

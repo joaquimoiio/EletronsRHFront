@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Vagas - Sistema RH</title>
+    <link href="../css/vagas.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH</h1>
+                <nav class="nav">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="areas.html" class="nav-link">Áreas</a>
+                    <a href="vagas.html" class="nav-link active">Vagas</a>
+                    <a href="eventos.html" class="nav-link">Eventos</a>
+                    <button id="logout-btn" class="logout-btn">Sair</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="page-header">
+                <h2>Gerenciar Vagas</h2>
+                <p>Publique e gerencie as vagas de emprego da empresa</p>
+            </div>
+
+            <div id="message" class="message hidden"></div>
+
+            <!-- Formulário Nova Vaga -->
+            <div class="form-section">
+                <div class="card">
+                    <h3>Nova Vaga</h3>
+                    <form id="vaga-form" class="vaga-form">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="vaga-titulo">Título da Vaga</label>
+                                <input type="text" id="vaga-titulo" name="titulo" required 
+                                       placeholder="Ex: Desenvolvedor Full Stack, Analista de RH...">
+                            </div>
+                            <div class="input-group">
+                                <label for="vaga-area">Área</label>
+                                <select id="vaga-area" name="areaId" required>
+                                    <option value="">Selecione uma área</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="vaga-descricao">Descrição da Vaga</label>
+                            <textarea id="vaga-descricao" name="descricao" rows="6" 
+                                      placeholder="Descreva as responsabilidades, requisitos e benefícios da vaga..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">Publicar Vaga</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de Vagas -->
+            <div class="list-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Vagas Publicadas</h3>
+                        <div class="header-actions">
+                            <span id="total-vagas" class="counter">0</span>
+                            <div class="filter-group">
+                                <select id="status-filter">
+                                    <option value="">Todos os status</option>
+                                    <option value="ATIVA">Ativas</option>
+                                    <option value="INATIVA">Inativas</option>
+                                    <option value="CONTRATADA">Contratadas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="loading" class="loading">
+                        Carregando vagas...
+                    </div>
+
+                    <div id="vagas-list" class="vagas-list hidden">
+                        <!-- Vagas serão carregadas aqui -->
+                    </div>
+
+                    <div id="empty-state" class="empty-state hidden">
+                        <p>Nenhuma vaga publicada ainda.</p>
+                        <span>Comece criando a primeira vaga da empresa.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/vagas.js"></script>
+</body>
+</html>

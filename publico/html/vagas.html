@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vagas de Emprego - Sistema RH</title>
+    <link href="../css/vagas.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH</h1>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Início</a>
+                    <a href="vagas.html" class="nav-link active">Vagas</a>
+                    <a href="eventos.html" class="nav-link">Eventos</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-hero">
+            <div class="container">
+                <h2>Oportunidades de Carreira</h2>
+                <p>Encontre a vaga perfeita para o seu perfil e faça parte do nosso time</p>
+            </div>
+        </section>
+
+        <section class="filters">
+            <div class="container">
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="area-filter">Filtrar por área:</label>
+                        <select id="area-filter">
+                            <option value="">Todas as áreas</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <input type="text" id="search-input" placeholder="Buscar por título da vaga...">
+                        <button id="search-btn">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="vagas-section">
+            <div class="container">
+                <div id="loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando vagas...</p>
+                </div>
+
+                <div id="vagas-grid" class="vagas-grid hidden">
+                    <!-- Vagas serão carregadas aqui -->
+                </div>
+
+                <div id="empty-state" class="empty-state hidden">
+                    <div class="empty-icon">📋</div>
+                    <h3>Nenhuma vaga encontrada</h3>
+                    <p>Não há vagas disponíveis no momento ou que correspondam aos seus critérios de busca.</p>
+                    <button id="clear-filters" class="btn-secondary">Limpar Filtros</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sistema RH. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../js/vagas.js"></script>
+</body>
+</html>
