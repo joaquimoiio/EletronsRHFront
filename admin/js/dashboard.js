@@ -33,43 +33,67 @@ function handleLogout() {
     }
 }
 
-function loadStats() {
-    // Carregar estatísticas do backend
-    Promise.all([
-        fetchAreas(),
-        fetchVagas(),
-        fetchCandidatos(),
-        fetchEventos()
-    ]).then(([areas, vagas, candidatos, eventos]) => {
-        updateStatCard('total-areas', areas.length);
-        updateStatCard('total-vagas', vagas.filter(v => v.status === 'ATIVA').length);
-        updateStatCard('total-candidatos', candidatos.length);
-        updateStatCard('total-eventos', eventos.length);
-    }).catch(error => {
+async function loadStats() {
+    try {
+        // Usar a API do backend para estatísticas
+        const stats = await ApiUtils.get('/estatisticas');
+        
+        updateStatCard('total-areas', stats.totalAreas || 0);
+        updateStatCard('total-vagas', stats.vagasAtivas || 0);
+        updateStatCard('total-candidatos', stats.totalCandidatos || 0);
+        updateStatCard('total-eventos', stats.totalEventos || 0);
+        
+    } catch (error) {
         console.error('Erro ao carregar estatísticas:', error);
+        // Fallback para carregar individualmente
+        loadStatsIndividually();
+    }
+}
+
+async function loadStatsIndividually() {
+    try {
+        const [areas, vagas, eventos] = await Promise.all([
+            ApiUtils.get('/areas').catch(() => []),
+            ApiUtils.get('/vagas/ativas').catch(() => []),
+            ApiUtils.get('/eventos').catch(() => [])
+        ]);
+        
+        // Calcular total de candidatos
+        const todasVagas = await ApiUtils.get('/vagas').catch(() => []);
+        const totalCandidatos = todasVagas.reduce((total, vaga) => {
+            return total + (vaga.candidatos ? vaga.candidatos.length : 0);
+        }, 0);
+        
+        updateStatCard('total-areas', areas.length);
+        updateStatCard('total-vagas', vagas.length);
+        updateStatCard('total-candidatos', totalCandidatos);
+        updateStatCard('total-eventos', eventos.length);
+        
+    } catch (error) {
+        console.error('Erro ao carregar estatísticas individuais:', error);
         // Mostrar valores padrão em caso de erro
         updateStatCard('total-areas', '0');
         updateStatCard('total-vagas', '0');
         updateStatCard('total-candidatos', '0');
         updateStatCard('total-eventos', '0');
-    });
+    }
 }
 
 function updateStatCard(elementId, value) {
     const element = document.getElementById(elementId);
     if (element) {
-        element.textContent = value;
-        
         // Animação simples de contagem
         if (typeof value === 'number' && value > 0) {
             animateCounter(element, value);
+        } else {
+            element.textContent = value;
         }
     }
 }
 
 function animateCounter(element, target) {
     let current = 0;
-    const increment = target / 20;
+    const increment = Math.max(1, Math.ceil(target / 20));
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
@@ -78,45 +102,4 @@ function animateCounter(element, target) {
         }
         element.textContent = Math.floor(current);
     }, 50);
-}
-
-// Funções para buscar dados do backend
-async function fetchAreas() {
-    try {
-        const response = await fetch('/api/areas');
-        return await response.json();
-    } catch (error) {
-        console.error('Erro ao buscar áreas:', error);
-        return [];
-    }
-}
-
-async function fetchVagas() {
-    try {
-        const response = await fetch('/api/vagas');
-        return await response.json();
-    } catch (error) {
-        console.error('Erro ao buscar vagas:', error);
-        return [];
-    }
-}
-
-async function fetchCandidatos() {
-    try {
-        const response = await fetch('/api/candidatos');
-        return await response.json();
-    } catch (error) {
-        console.error('Erro ao buscar candidatos:', error);
-        return [];
-    }
-}
-
-async function fetchEventos() {
-    try {
-        const response = await fetch('/api/eventos');
-        return await response.json();
-    } catch (error) {
-        console.error('Erro ao buscar eventos:', error);
-        return [];
-    }
 }

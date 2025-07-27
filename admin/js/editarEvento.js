@@ -72,13 +72,7 @@ function handleLogout() {
 
 async function loadEventoDetails(eventoId) {
     try {
-        const response = await fetch(`/api/eventos/${eventoId}`);
-        
-        if (!response.ok) {
-            throw new Error('Evento não encontrado');
-        }
-        
-        currentEvento = await response.json();
+        currentEvento = await ApiUtils.get(`/eventos/${eventoId}`);
         displayEventoDetails(currentEvento);
         
     } catch (error) {
@@ -104,7 +98,7 @@ function displayEventoDetails(evento) {
     // Mostrar imagem de capa se existir
     if (evento.imagemCapa) {
         const imagemCapa = document.getElementById('imagem-capa');
-        imagemCapa.src = `/uploads/${evento.imagemCapa}`;
+        imagemCapa.src = ApiUtils.getUploadUrl(evento.imagemCapa);
         imagemCapa.style.display = 'block';
     }
     
@@ -115,9 +109,7 @@ function displayEventoDetails(evento) {
 
 async function loadGaleria(eventoId) {
     try {
-        const response = await fetch(`/api/eventos/${eventoId}/imagens`);
-        imagens = await response.json();
-        
+        imagens = await ApiUtils.get(`/eventos/${eventoId}/imagens`);
         displayGaleria();
         updateImagensCount();
         
@@ -155,8 +147,8 @@ function createImagemItem(imagem) {
     div.className = 'imagem-item';
     
     div.innerHTML = `
-        <img src="/uploads/${imagem.caminhoArquivo}" alt="${escapeHtml(imagem.nomeArquivo)}" 
-             onclick="openImageModal('/uploads/${imagem.caminhoArquivo}')">
+        <img src="${ApiUtils.getUploadUrl(imagem.caminhoArquivo)}" alt="${escapeHtml(imagem.nomeArquivo)}" 
+             onclick="openImageModal('${ApiUtils.getUploadUrl(imagem.caminhoArquivo)}')">
         <div class="imagem-overlay">
             <button class="delete-img-btn" onclick="deleteImagem(${imagem.id})">
                 🗑️ Excluir
@@ -185,20 +177,7 @@ async function handleEditEvento(e) {
     const descricao = formData.get('descricao').trim();
     
     try {
-        const response = await fetch(`/api/eventos/${eventoId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ descricao: descricao })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao atualizar evento');
-        }
-        
-        const updatedEvento = await response.json();
+        const updatedEvento = await ApiUtils.put(`/eventos/${eventoId}`, { descricao: descricao });
         currentEvento = updatedEvento;
         
         showMessage('Evento atualizado com sucesso!', 'success');
@@ -260,21 +239,12 @@ async function uploadImages(files) {
             const formData = new FormData();
             formData.append('imagem', file);
             
-            const response = await fetch(`/api/eventos/${eventoId}/imagens`, {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Erro ao fazer upload de ${file.name}`);
-            }
-            
-            const novaImagem = await response.json();
+            const novaImagem = await ApiUtils.postFormData(`/eventos/${eventoId}/imagens`, formData);
             imagens.push(novaImagem);
             
         } catch (error) {
             console.error(`Erro no upload de ${file.name}:`, error);
-            showMessage(error.message, 'error');
+            showMessage(`Erro ao fazer upload de ${file.name}`, 'error');
         }
     }
     
@@ -292,14 +262,7 @@ async function deleteImagem(imagemId) {
     }
     
     try {
-        const response = await fetch(`/api/eventos/imagens/${imagemId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            throw new Error('Erro ao excluir imagem');
-        }
-        
+        await ApiUtils.delete(`/eventos/imagens/${imagemId}`);
         imagens = imagens.filter(img => img.id !== imagemId);
         
         displayGaleria();

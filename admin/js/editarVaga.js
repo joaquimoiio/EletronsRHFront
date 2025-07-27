@@ -64,8 +64,7 @@ function handleLogout() {
 
 async function loadAreas() {
     try {
-        const response = await fetch('/api/areas');
-        const areas = await response.json();
+        const areas = await ApiUtils.get('/areas');
         
         const select = document.getElementById('vaga-area');
         select.innerHTML = '<option value="">Selecione uma área</option>';
@@ -85,13 +84,7 @@ async function loadAreas() {
 
 async function loadVagaDetails(vagaId) {
     try {
-        const response = await fetch(`/api/vagas/${vagaId}`);
-        
-        if (!response.ok) {
-            throw new Error('Vaga não encontrada');
-        }
-        
-        currentVaga = await response.json();
+        currentVaga = await ApiUtils.get(`/vagas/${vagaId}`);
         displayVagaDetails(currentVaga);
         
     } catch (error) {
@@ -135,8 +128,7 @@ function createStatusBadge(status) {
 
 async function loadCandidatos(vagaId) {
     try {
-        const response = await fetch(`/api/vagas/${vagaId}/candidatos`);
-        candidatos = await response.json();
+        candidatos = await ApiUtils.get(`/vagas/${vagaId}/candidatos`);
         filteredCandidatos = [...candidatos];
         
         displayCandidatos();
@@ -184,7 +176,7 @@ function createCandidatoItem(candidato) {
         </div>
         <div class="candidato-actions">
             ${temCurriculo ? 
-                `<a href="/uploads/${candidato.caminhoCurriculo}" target="_blank" class="download-btn">
+                `<a href="${ApiUtils.getUploadUrl(candidato.caminhoCurriculo)}" target="_blank" class="download-btn">
                     📄 Download CV
                 </a>` :
                 `<span class="download-btn disabled">Sem currículo</span>`
@@ -241,20 +233,7 @@ async function handleEditVaga(e) {
             descricao: descricao || null
         };
         
-        const response = await fetch(`/api/vagas/${vagaId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(vagaData)
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao atualizar vaga');
-        }
-        
-        const updatedVaga = await response.json();
+        const updatedVaga = await ApiUtils.put(`/vagas/${vagaId}`, vagaData);
         currentVaga = updatedVaga;
         
         // Atualizar informações da sidebar

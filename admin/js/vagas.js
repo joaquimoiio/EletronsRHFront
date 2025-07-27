@@ -42,8 +42,7 @@ function handleLogout() {
 
 async function loadAreas() {
     try {
-        const response = await fetch('/api/areas');
-        areas = await response.json();
+        areas = await ApiUtils.get('/areas');
         
         const select = document.getElementById('vaga-area');
         select.innerHTML = '<option value="">Selecione uma área</option>';
@@ -64,13 +63,7 @@ async function loadAreas() {
 async function loadVagas() {
     try {
         showLoading(true);
-        const response = await fetch('/api/vagas');
-        
-        if (!response.ok) {
-            throw new Error('Erro ao carregar vagas');
-        }
-        
-        vagas = await response.json();
+        vagas = await ApiUtils.get('/vagas');
         filteredVagas = [...vagas];
         
         displayVagas();
@@ -190,20 +183,7 @@ async function handleCreateVaga(e) {
             descricao: descricao || null
         };
         
-        const response = await fetch('/api/vagas', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(vagaData)
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao criar vaga');
-        }
-        
-        const newVaga = await response.json();
+        const newVaga = await ApiUtils.post('/vagas', vagaData);
         vagas.unshift(newVaga);
         
         showMessage('Vaga publicada com sucesso!', 'success');
@@ -232,18 +212,7 @@ async function changeVagaStatus(vagaId, newStatus) {
     }
     
     try {
-        const response = await fetch(`/api/vagas/${vagaId}/status`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: newStatus })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao alterar status da vaga');
-        }
+        await ApiUtils.patch(`/vagas/${vagaId}/status`, { status: newStatus });
         
         // Atualizar vaga local
         const vagaIndex = vagas.findIndex(v => v.id === vagaId);
@@ -269,15 +238,7 @@ async function deleteVaga(vagaId) {
     }
     
     try {
-        const response = await fetch(`/api/vagas/${vagaId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao excluir vaga');
-        }
-        
+        await ApiUtils.delete(`/vagas/${vagaId}`);
         vagas = vagas.filter(v => v.id !== vagaId);
         
         showMessage('Vaga excluída com sucesso!', 'success');

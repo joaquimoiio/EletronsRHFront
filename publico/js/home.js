@@ -1,12 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Configurar eventos
-    setupEventListeners();
-    
-    // Carregar estatísticas
-    loadStats();
-    
-    // Carregar áreas para o modal
-    loadAreas();
+    // Verificar se a API está disponível
+    checkApiHealth().then(isHealthy => {
+        if (!isHealthy) {
+            console.warn('Backend não está disponível. Usando dados de exemplo.');
+            loadMockStats();
+        } else {
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Carregar estatísticas
+            loadStats();
+            
+            // Carregar áreas para o modal
+            loadAreas();
+        }
+    });
 });
 
 function setupEventListeners() {
@@ -26,25 +34,29 @@ function setupEventListeners() {
 
 async function loadStats() {
     try {
-        // Carregar estatísticas em paralelo
-        const [vagasData, areasData, eventosData] = await Promise.all([
-            fetch('/api/vagas/ativas').then(r => r.json()).catch(() => []),
-            fetch('/api/areas').then(r => r.json()).catch(() => []),
-            fetch('/api/eventos').then(r => r.json()).catch(() => [])
+        // Carregar estatísticas em paralelo usando a nova API
+        const [vagasAtivas, areas, eventos] = await Promise.all([
+            ApiUtils.get('/vagas/ativas'),
+            ApiUtils.get('/areas'),
+            ApiUtils.get('/eventos')
         ]);
         
         // Atualizar contadores com animação
-        animateCounter('vagas-count', vagasData.length);
-        animateCounter('areas-count', areasData.length);
-        animateCounter('eventos-count', eventosData.length);
+        animateCounter('vagas-count', vagasAtivas.length);
+        animateCounter('areas-count', areas.length);
+        animateCounter('eventos-count', eventos.length);
         
     } catch (error) {
         console.error('Erro ao carregar estatísticas:', error);
-        // Mostrar valores padrão em caso de erro
-        document.getElementById('vagas-count').textContent = '0';
-        document.getElementById('areas-count').textContent = '0';
-        document.getElementById('eventos-count').textContent = '0';
+        loadMockStats();
     }
+}
+
+function loadMockStats() {
+    // Dados de exemplo caso a API não esteja disponível
+    animateCounter('vagas-count', 5);
+    animateCounter('areas-count', 3);
+    animateCounter('eventos-count', 2);
 }
 
 function animateCounter(elementId, targetValue) {
@@ -65,8 +77,7 @@ function animateCounter(elementId, targetValue) {
 
 async function loadAreas() {
     try {
-        const response = await fetch('/api/areas');
-        const areas = await response.json();
+        const areas = await ApiUtils.get('/areas');
         
         const select = document.getElementById('notify-area');
         select.innerHTML = '<option value="">Todas as áreas</option>';
@@ -106,20 +117,12 @@ async function handleNotifySubmit(e) {
     }
     
     try {
-        const response = await fetch('/api/notificacoes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                areaId: areaId || null
-            })
-        });
+        const data = {
+            email: email,
+            areaId: areaId || null
+        };
         
-        if (!response.ok) {
-            throw new Error('Erro ao cadastrar notificação');
-        }
+        await ApiUtils.post('/notificacoes', data);
         
         alert('Cadastro realizado com sucesso! Você receberá notificações sobre novas vagas.');
         closeNotifyModal();

@@ -49,13 +49,7 @@ function handleLogout() {
 async function loadAreas() {
     try {
         showLoading(true);
-        const response = await fetch('/api/areas');
-        
-        if (!response.ok) {
-            throw new Error('Erro ao carregar áreas');
-        }
-        
-        areas = await response.json();
+        areas = await ApiUtils.get('/areas');
         displayAreas();
         updateCounter();
         
@@ -131,20 +125,7 @@ async function handleCreateArea(e) {
     }
     
     try {
-        const response = await fetch('/api/areas', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ nome: nome })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao criar área');
-        }
-        
-        const newArea = await response.json();
+        const newArea = await ApiUtils.post('/areas', { nome: nome });
         areas.push(newArea);
         
         showMessage('Área cadastrada com sucesso!', 'success');
@@ -186,20 +167,7 @@ async function handleEditArea(e) {
     }
     
     try {
-        const response = await fetch(`/api/areas/${areaId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ nome: nome })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao atualizar área');
-        }
-        
-        const updatedArea = await response.json();
+        const updatedArea = await ApiUtils.put(`/areas/${areaId}`, { nome: nome });
         const index = areas.findIndex(a => a.id === areaId);
         if (index !== -1) {
             areas[index] = updatedArea;
@@ -224,15 +192,7 @@ async function deleteArea(areaId) {
     }
     
     try {
-        const response = await fetch(`/api/areas/${areaId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Erro ao excluir área');
-        }
-        
+        await ApiUtils.delete(`/areas/${areaId}`);
         areas = areas.filter(a => a.id !== areaId);
         
         showMessage('Área excluída com sucesso!', 'success');

@@ -29,8 +29,7 @@ function setupEventListeners() {
 
 async function loadAreas() {
     try {
-        const response = await fetch('/api/areas');
-        const areas = await response.json();
+        const areas = await ApiUtils.get('/areas');
         
         const select = document.getElementById('area-filter');
         areas.forEach(area => {
@@ -49,12 +48,7 @@ async function loadVagas() {
     try {
         showLoading(true);
         
-        const response = await fetch('/api/vagas/ativas');
-        if (!response.ok) {
-            throw new Error('Erro ao carregar vagas');
-        }
-        
-        allVagas = await response.json();
+        allVagas = await ApiUtils.get('/vagas/ativas');
         filteredVagas = [...allVagas];
         
         displayVagas();
