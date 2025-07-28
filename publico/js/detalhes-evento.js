@@ -7,9 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Configurar eventos
-    setupEventListeners();
-    
     // Carregar dados do evento
     loadEventoDetails(eventoId);
     loadGaleria(eventoId);
@@ -17,95 +14,91 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let currentEvento = null;
 let imagens = [];
-let currentImageIndex = 0;
 
 function getEventoIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
 }
 
-function setupEventListeners() {
-    // Modal de imagem
-    document.getElementById('close-modal').addEventListener('click', closeImageModal);
-    document.getElementById('prev-image').addEventListener('click', () => navigateImage(-1));
-    document.getElementById('next-image').addEventListener('click', () => navigateImage(1));
-    
-    // Fechar modal clicando fora da imagem
-    document.getElementById('image-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeImageModal();
-        }
-    });
-    
-    // Navegação por teclado
-    document.addEventListener('keydown', function(e) {
-        const modal = document.getElementById('image-modal');
-        if (!modal.classList.contains('hidden')) {
-            switch(e.key) {
-                case 'Escape':
-                    closeImageModal();
-                    break;
-                case 'ArrowLeft':
-                    navigateImage(-1);
-                    break;
-                case 'ArrowRight':
-                    navigateImage(1);
-                    break;
-            }
-        }
-    });
-}
-
 async function loadEventoDetails(eventoId) {
     try {
+        console.log('Carregando evento ID:', eventoId);
+        showLoading(true);
+        
         currentEvento = await ApiUtils.get(`/eventos/${eventoId}`);
+        console.log('Evento carregado:', currentEvento);
+        
         displayEventoDetails(currentEvento);
+        showLoading(false);
         
     } catch (error) {
         console.error('Erro ao carregar evento:', error);
+        showLoading(false);
         showErrorState();
     }
 }
 
 function displayEventoDetails(evento) {
     // Atualizar título e breadcrumb
-    document.getElementById('breadcrumb-title').textContent = evento.titulo;
-    document.getElementById('evento-title').textContent = evento.titulo;
+    const breadcrumbTitle = document.getElementById('breadcrumb-title');
+    const eventoTitulo = document.getElementById('evento-titulo');
+    
+    if (breadcrumbTitle) {
+        breadcrumbTitle.textContent = evento.titulo;
+    }
+    
+    if (eventoTitulo) {
+        eventoTitulo.textContent = evento.titulo;
+    }
+    
+    // Atualizar título da página
     document.title = `${evento.titulo} - Sistema RH`;
     
     // Atualizar data
     const dataFormatada = formatDate(evento.dataCriacao);
-    document.getElementById('evento-date').textContent = `Criado em: ${dataFormatada}`;
-    document.getElementById('info-date').textContent = dataFormatada;
+    const eventoData = document.getElementById('evento-data');
+    const infoData = document.getElementById('info-data');
+    
+    if (eventoData) {
+        eventoData.textContent = `Criado em: ${dataFormatada}`;
+    }
+    
+    if (infoData) {
+        infoData.textContent = dataFormatada;
+    }
     
     // Atualizar descrição
-    const descricaoElement = document.getElementById('evento-description');
-    if (evento.descricao && evento.descricao.trim()) {
-        descricaoElement.innerHTML = formatDescription(evento.descricao);
-    } else {
-        descricaoElement.innerHTML = '<p>Aguarde mais informações sobre este evento em breve.</p>';
+    const eventoDescricao = document.getElementById('evento-descricao');
+    if (eventoDescricao) {
+        if (evento.descricao && evento.descricao.trim()) {
+            eventoDescricao.innerHTML = formatDescription(evento.descricao);
+        } else {
+            eventoDescricao.innerHTML = '<p>Aguarde mais informações sobre este evento em breve.</p>';
+        }
     }
     
     // Mostrar imagem de capa se existir
-    if (evento.imagemCapa) {
-        const eventoCapa = document.getElementById('evento-capa');
+    const eventoCapa = document.getElementById('evento-capa');
+    const placeholderCapa = document.getElementById('placeholder-capa');
+    
+    if (evento.imagemCapa && eventoCapa) {
         eventoCapa.src = ApiUtils.getUploadUrl(evento.imagemCapa);
         eventoCapa.classList.remove('hidden');
-        document.getElementById('placeholder-capa').style.display = 'none';
+        if (placeholderCapa) {
+            placeholderCapa.style.display = 'none';
+        }
+    } else if (placeholderCapa) {
+        placeholderCapa.style.display = 'flex';
+        if (eventoCapa) {
+            eventoCapa.classList.add('hidden');
+        }
     }
     
-    // Mostrar conteúdo com animação
-    document.getElementById('loading-section').classList.add('hidden');
-    document.getElementById('evento-content').classList.remove('hidden');
-    
-    // Aplicar animações
-    setTimeout(() => {
-        document.querySelectorAll('.slide-up').forEach((el, index) => {
-            setTimeout(() => {
-                el.style.animationDelay = `${index * 0.1}s`;
-            }, index * 100);
-        });
-    }, 100);
+    // Mostrar conteúdo
+    const eventoContent = document.getElementById('evento-content');
+    if (eventoContent) {
+        eventoContent.classList.remove('hidden');
+    }
 }
 
 function formatDescription(description) {
@@ -120,17 +113,22 @@ function formatDescription(description) {
 
 async function loadGaleria(eventoId) {
     try {
+        console.log('Carregando galeria para evento ID:', eventoId);
+        showGaleriaLoading(true);
+        
         imagens = await ApiUtils.get(`/eventos/${eventoId}/imagens`);
+        console.log('Imagens carregadas:', imagens);
+        
         displayGaleria();
         updateImagensCount();
+        showGaleriaLoading(false);
         
     } catch (error) {
         console.error('Erro ao carregar galeria:', error);
         imagens = [];
         displayGaleria();
         updateImagensCount();
-    } finally {
-        document.getElementById('galeria-loading').classList.add('hidden');
+        showGaleriaLoading(false);
     }
 }
 
@@ -138,106 +136,148 @@ function displayGaleria() {
     const galeriaGrid = document.getElementById('galeria-grid');
     const emptyGaleria = document.getElementById('empty-galeria');
     
-    if (imagens.length === 0) {
-        galeriaGrid.classList.add('hidden');
-        emptyGaleria.classList.remove('hidden');
+    if (!galeriaGrid) {
+        console.error('Elemento galeria-grid não encontrado');
         return;
     }
     
+    if (imagens.length === 0) {
+        galeriaGrid.classList.add('hidden');
+        if (emptyGaleria) {
+            emptyGaleria.classList.remove('hidden');
+        }
+        return;
+    }
+    
+    // Limpar grid
     galeriaGrid.innerHTML = '';
     
+    // Adicionar cada imagem como um card
     imagens.forEach((imagem, index) => {
-        const imagemItem = createGaleriaItem(imagem, index);
-        galeriaGrid.appendChild(imagemItem);
+        const fotoCard = createFotoCard(imagem, index);
+        galeriaGrid.appendChild(fotoCard);
     });
     
     galeriaGrid.classList.remove('hidden');
-    emptyGaleria.classList.add('hidden');
+    if (emptyGaleria) {
+        emptyGaleria.classList.add('hidden');
+    }
+    
+    console.log(`${imagens.length} fotos adicionadas à galeria`);
 }
 
-function createGaleriaItem(imagem, index) {
-    const div = document.createElement('div');
-    div.className = 'galeria-item fade-in';
-    div.style.animationDelay = `${index * 0.05}s`;
-    div.onclick = () => openImageModal(index);
+function createFotoCard(imagem, index) {
+    const card = document.createElement('div');
+    card.className = 'foto-card fade-in';
+    card.style.animationDelay = `${index * 0.1}s`;
     
-    div.innerHTML = `
-        <img src="${ApiUtils.getUploadUrl(imagem.caminhoArquivo)}" alt="${escapeHtml(imagem.nomeArquivo)}" loading="lazy">
-        <div class="galeria-overlay">
-            <span>🔍</span>
+    // Nome do arquivo sem extensão para exibição
+    const nomeExibicao = imagem.nomeArquivo.replace(/\.[^/.]+$/, "");
+    
+    card.innerHTML = `
+        <div class="foto-image-container">
+            <img src="${ApiUtils.getUploadUrl(imagem.caminhoArquivo)}" 
+                 alt="${escapeHtml(imagem.nomeArquivo)}" 
+                 class="foto-image"
+                 loading="lazy"
+                 onerror="this.parentElement.parentElement.style.display='none'">
+            <div class="foto-overlay">
+                <button class="foto-expand-btn" onclick="openPhotoModal('${escapeHtml(imagem.caminhoArquivo)}', '${escapeHtml(imagem.nomeArquivo)}')">
+                    🔍 Ver ampliada
+                </button>
+            </div>
+        </div>
+        <div class="foto-info">
+            <h4 class="foto-title">${escapeHtml(nomeExibicao)}</h4>
+            <span class="foto-number">Foto ${index + 1} de ${imagens.length}</span>
         </div>
     `;
     
-    return div;
+    return card;
 }
 
 function updateImagensCount() {
-    const count = imagens.length;
-    document.getElementById('info-imagens').textContent = `${count} foto${count !== 1 ? 's' : ''}`;
-}
-
-function openImageModal(imageIndex) {
-    if (imagens.length === 0) return;
-    
-    currentImageIndex = imageIndex;
-    updateModalImage();
-    document.getElementById('image-modal').classList.remove('hidden');
-    
-    // Controlar botões de navegação
-    updateNavigationButtons();
-}
-
-function closeImageModal() {
-    document.getElementById('image-modal').classList.add('hidden');
-}
-
-function navigateImage(direction) {
-    if (imagens.length <= 1) return;
-    
-    currentImageIndex += direction;
-    
-    if (currentImageIndex >= imagens.length) {
-        currentImageIndex = 0;
-    } else if (currentImageIndex < 0) {
-        currentImageIndex = imagens.length - 1;
-    }
-    
-    updateModalImage();
-    updateNavigationButtons();
-}
-
-function updateModalImage() {
-    if (currentImageIndex >= 0 && currentImageIndex < imagens.length) {
-        const imagem = imagens[currentImageIndex];
-        const modalImage = document.getElementById('modal-image');
-        modalImage.src = ApiUtils.getUploadUrl(imagem.caminhoArquivo);
-        modalImage.alt = imagem.nomeArquivo;
-        
-        // Atualizar contador
-        document.getElementById('modal-counter').textContent = 
-            `${currentImageIndex + 1} / ${imagens.length}`;
+    const infoImagens = document.getElementById('info-imagens');
+    if (infoImagens) {
+        const count = imagens.length;
+        infoImagens.textContent = `${count} foto${count !== 1 ? 's' : ''}`;
     }
 }
 
-function updateNavigationButtons() {
-    const prevBtn = document.getElementById('prev-image');
-    const nextBtn = document.getElementById('next-image');
+function showGaleriaLoading(show) {
+    const galeriaLoading = document.getElementById('galeria-loading');
+    const galeriaGrid = document.getElementById('galeria-grid');
     
-    if (imagens.length <= 1) {
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
+    if (show) {
+        if (galeriaLoading) galeriaLoading.classList.remove('hidden');
+        if (galeriaGrid) galeriaGrid.classList.add('hidden');
     } else {
-        prevBtn.style.display = 'block';
-        nextBtn.style.display = 'block';
+        if (galeriaLoading) galeriaLoading.classList.add('hidden');
+    }
+}
+
+// Modal para foto expandida (opcional)
+function openPhotoModal(caminhoArquivo, nomeArquivo) {
+    const modal = document.getElementById('photo-modal');
+    const modalPhoto = document.getElementById('modal-photo');
+    const modalPhotoName = document.getElementById('modal-photo-name');
+    
+    if (modal && modalPhoto) {
+        modalPhoto.src = ApiUtils.getUploadUrl(caminhoArquivo);
+        modalPhoto.alt = nomeArquivo;
         
-        prevBtn.disabled = false;
-        nextBtn.disabled = false;
+        if (modalPhotoName) {
+            modalPhotoName.textContent = nomeArquivo;
+        }
+        
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        
+        // Adicionar classe ao body para evitar scroll
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closePhotoModal() {
+    const modal = document.getElementById('photo-modal');
+    
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        
+        // Restaurar scroll do body
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Fechar modal com ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePhotoModal();
+    }
+});
+
+function showLoading(show) {
+    const loading = document.getElementById('loading');
+    const eventoContent = document.getElementById('evento-content');
+    
+    if (show) {
+        if (loading) loading.classList.remove('hidden');
+        if (eventoContent) eventoContent.classList.add('hidden');
+    } else {
+        if (loading) loading.classList.add('hidden');
+        if (eventoContent) eventoContent.classList.remove('hidden');
     }
 }
 
 function showErrorState() {
-    document.getElementById('loading-section').classList.add('hidden');
-    document.getElementById('error-section').classList.remove('hidden');
+    const loading = document.getElementById('loading');
+    const eventoContent = document.getElementById('evento-content');
+    const errorState = document.getElementById('error-state');
+    
+    if (loading) loading.classList.add('hidden');
+    if (eventoContent) eventoContent.classList.add('hidden');
+    if (errorState) errorState.classList.remove('hidden');
 }
 
 function formatDate(dateString) {

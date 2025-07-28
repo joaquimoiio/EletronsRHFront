@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Evento - Sistema RH</title>
-    <link href="../css/detalhesEvento.css" rel="stylesheet">
+    <link href="../css/global.css" rel="stylesheet">
+    <link href="../css/detalhes-evento.css" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -14,34 +15,47 @@
                 <nav class="nav">
                     <a href="index.html" class="nav-link">Início</a>
                     <a href="vagas.html" class="nav-link">Vagas</a>
-                    <a href="eventos.html" class="nav-link">Eventos</a>
+                    <a href="eventos.html" class="nav-link active">Eventos</a>
                 </nav>
             </div>
         </div>
     </header>
 
     <main>
-        <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            <p>Carregando detalhes do evento...</p>
+        <!-- Loading State -->
+        <div id="loading" class="loading-section">
+            <div class="container">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Carregando detalhes do evento...</p>
+                </div>
+            </div>
         </div>
 
-        <div id="evento-content" class="evento-content hidden">
+        <!-- Content -->
+        <div id="evento-content" class="hidden">
+            <!-- Breadcrumb -->
+            <section class="breadcrumb">
+                <div class="container">
+                    <nav class="breadcrumb-nav">
+                        <a href="eventos.html">Eventos</a>
+                        <span class="breadcrumb-separator">›</span>
+                        <span id="breadcrumb-title">Carregando...</span>
+                    </nav>
+                </div>
+            </section>
+
+            <!-- Evento Header -->
             <section class="evento-header">
                 <div class="container">
-                    <div class="breadcrumb">
-                        <a href="eventos.html">Eventos</a>
-                        <span>/</span>
-                        <span id="breadcrumb-title">Carregando...</span>
-                    </div>
-                    
                     <div class="evento-title-section">
-                        <h1 id="evento-titulo">Carregando...</h1>
+                        <h1 id="evento-titulo" class="evento-title">Carregando...</h1>
                         <div class="evento-meta">
                             <span id="evento-data">Carregando...</span>
                         </div>
                         
-                        <div id="evento-capa-container">
+                        <!-- Imagem de capa se existir -->
+                        <div id="evento-capa-container" class="evento-capa-container">
                             <img id="evento-capa" class="evento-capa hidden" src="" alt="Imagem do evento">
                             <div id="placeholder-capa" class="placeholder-capa">🎉</div>
                         </div>
@@ -49,55 +63,77 @@
                 </div>
             </section>
 
-            <section class="evento-details">
+            <!-- Content Section -->
+            <section class="content-section">
                 <div class="container">
-                    <div class="details-grid">
-                        <div class="evento-description">
-                            <h2>Sobre o Evento</h2>
+                    <!-- Evento Description -->
+                    <div class="evento-description-section">
+                        <div class="description-card">
+                            <div class="description-header">
+                                <h2>Sobre o Evento</h2>
+                            </div>
                             <div id="evento-descricao" class="description-content">
                                 Carregando descrição...
                             </div>
                         </div>
 
-                        <div class="evento-sidebar">
-                            <div class="evento-info">
-                                <h3>Informações</h3>
+                        <!-- Informações do Evento -->
+                        <div class="evento-info-card">
+                            <div class="info-header">
+                                <h3>📋 Informações do Evento</h3>
+                            </div>
+                            
+                            <div class="info-grid">
                                 <div class="info-item">
-                                    <span class="info-label">Data de Criação:</span>
+                                    <span class="info-label">📅 Data de Criação:</span>
                                     <span id="info-data" class="info-value">-</span>
                                 </div>
+                                
                                 <div class="info-item">
-                                    <span class="info-label">Galeria:</span>
+                                    <span class="info-label">📸 Total de Fotos:</span>
                                     <span id="info-imagens" class="info-value">- fotos</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="galeria-section">
-                                <div class="galeria-header">
-                                    <h3>Galeria de Fotos</h3>
-                                </div>
-                                
-                                <div id="galeria-grid" class="galeria-grid">
-                                    <!-- Imagens serão carregadas aqui -->
-                                </div>
+                    <!-- Galeria de Fotos -->
+                    <div class="galeria-section">
+                        <div class="section-header">
+                            <h2>📸 Galeria de Fotos</h2>
+                            <p>Confira as imagens deste evento</p>
+                        </div>
+                        
+                        <!-- Loading de galeria -->
+                        <div id="galeria-loading" class="galeria-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Carregando galeria...</p>
+                        </div>
 
-                                <div id="empty-galeria" class="empty-galeria hidden">
-                                    <p>Nenhuma foto disponível para este evento.</p>
-                                </div>
-                            </div>
+                        <!-- Grid de fotos -->
+                        <div id="galeria-grid" class="fotos-grid hidden">
+                            <!-- Fotos serão carregadas aqui -->
+                        </div>
+
+                        <!-- Estado vazio -->
+                        <div id="empty-galeria" class="empty-galeria hidden">
+                            <div class="empty-icon">📷</div>
+                            <h3>Nenhuma foto disponível</h3>
+                            <p>Este evento ainda não possui fotos em sua galeria.</p>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
 
-        <div id="error-state" class="error-state hidden">
+        <!-- Error State -->
+        <div id="error-state" class="error-section hidden">
             <div class="container">
                 <div class="error-content">
                     <div class="error-icon">❌</div>
                     <h2>Evento não encontrado</h2>
                     <p>O evento que você está procurando não foi encontrado ou não está mais disponível.</p>
-                    <a href="eventos.html" class="btn-secondary">Ver Outros Eventos</a>
+                    <a href="eventos.html" class="btn btn-primary">Ver Outros Eventos</a>
                 </div>
             </div>
         </div>
@@ -109,16 +145,19 @@
         </div>
     </footer>
 
-    <!-- Modal para visualizar imagens -->
-    <div id="image-modal" class="modal hidden">
+    <!-- Modal para visualizar foto expandida (opcional) -->
+    <div id="photo-modal" class="photo-modal hidden">
+        <div class="modal-backdrop" onclick="closePhotoModal()"></div>
         <div class="modal-content">
-            <button id="close-modal" class="close-modal">&times;</button>
-            <button id="prev-image" class="modal-nav modal-prev">‹</button>
-            <img id="modal-image" class="modal-image" src="" alt="Imagem do evento">
-            <button id="next-image" class="modal-nav modal-next">›</button>
+            <button class="modal-close" onclick="closePhotoModal()">✕</button>
+            <img id="modal-photo" class="modal-photo" src="" alt="Foto do evento">
+            <div class="modal-info">
+                <span id="modal-photo-name" class="photo-name"></span>
+            </div>
         </div>
     </div>
 
-    <script src="../js/detalhesEvento.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/detalhes-evento.js"></script>
 </body>
 </html>

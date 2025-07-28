@@ -12,60 +12,128 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setupEventListeners() {
     // Sort
-    document.getElementById('sort-select').addEventListener('change', applySorting);
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', applySorting);
+    }
     
     // Retry
-    document.getElementById('retry-btn').addEventListener('click', loadEventos);
+    const retryBtn = document.getElementById('retry-btn');
+    if (retryBtn) {
+        retryBtn.addEventListener('click', loadEventos);
+    }
 }
 
 async function loadEventos() {
     try {
-        showLoading(true);
-        hideStates();
+        console.log('Iniciando carregamento de eventos...');
+        showSkeletonLoading(true);
+        hideAllStates();
         
+        // Carregar eventos da API
         allEventos = await ApiUtils.get('/eventos');
+        console.log('Eventos carregados:', allEventos);
+        
         filteredEventos = [...allEventos];
         
-        applySorting();
-        displayEventos();
-        updateEventsCount();
+        // Pequeno delay para mostrar o skeleton (opcional)
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Ocultar skeleton e mostrar conteúdo
+        showSkeletonLoading(false);
+        
+        if (filteredEventos.length === 0) {
+            showEmptyState();
+        } else {
+            applySorting();
+            displayEventos();
+            updateEventsCount();
+            showFilterBar();
+        }
         
     } catch (error) {
         console.error('Erro ao carregar eventos:', error);
+        showSkeletonLoading(false);
         showErrorState();
-    } finally {
-        showLoading(false);
+    }
+}
+
+function showSkeletonLoading(show) {
+    const loading = document.getElementById('loading');
+    
+    if (show) {
+        // Mostrar skeleton
+        if (loading) {
+            loading.classList.remove('hidden');
+            // Criar skeleton cards se não existirem
+            if (loading.children.length === 0) {
+                createSkeletonCards();
+            }
+        }
+        hideAllStates();
+    } else {
+        // Ocultar skeleton
+        if (loading) {
+            loading.classList.add('hidden');
+        }
+    }
+}
+
+function createSkeletonCards() {
+    const loading = document.getElementById('loading');
+    if (!loading) return;
+    
+    // Limpar conteúdo existente
+    loading.innerHTML = '';
+    
+    // Criar 3 skeleton cards
+    for (let i = 0; i < 3; i++) {
+        const skeletonCard = document.createElement('div');
+        skeletonCard.className = 'evento-skeleton';
+        
+        skeletonCard.innerHTML = `
+            <div class="skeleton skeleton-image"></div>
+            <div class="skeleton-content">
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-date"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text" style="width: 70%;"></div>
+            </div>
+        `;
+        
+        loading.appendChild(skeletonCard);
     }
 }
 
 function displayEventos() {
+    console.log('Exibindo eventos:', filteredEventos.length);
+    
     if (filteredEventos.length === 0) {
         showEmptyState();
         return;
     }
     
-    // Mostrar featured event se houver eventos
-    if (filteredEventos.length > 0) {
+    // Exibir evento em destaque se houver mais de um evento
+    if (filteredEventos.length > 1) {
         displayFeaturedEvento(filteredEventos[0]);
         displayRegularEventos(filteredEventos.slice(1));
+    } else {
+        // Se só há um evento, não mostrar como destaque
+        hideFeaturedEvento();
+        displayRegularEventos(filteredEventos);
     }
     
-    // Mostrar elementos
-    document.getElementById('filter-bar').classList.remove('hidden');
-    document.getElementById('eventos-grid').classList.remove('hidden');
-    
-    if (filteredEventos.length > 1) {
-        document.getElementById('featured-evento').classList.remove('hidden');
-    }
-    
-    hideStates();
+    // Mostrar elementos principais
+    showEventosGrid();
+    hideAllStates();
 }
 
 function displayFeaturedEvento(evento) {
     const featuredContainer = document.getElementById('featured-evento');
     
-    if (!evento) {
-        featuredContainer.classList.add('hidden');
+    if (!evento || !featuredContainer) {
+        hideFeaturedEvento();
         return;
     }
     
@@ -96,17 +164,29 @@ function displayFeaturedEvento(evento) {
             </div>
         </div>
     `;
+    
+    featuredContainer.classList.remove('hidden');
 }
 
 function displayRegularEventos(eventos) {
     const eventosGrid = document.getElementById('eventos-grid');
     
+    if (!eventosGrid) {
+        console.error('Grid de eventos não encontrado');
+        return;
+    }
+    
+    // Limpar grid
     eventosGrid.innerHTML = '';
     
-    eventos.forEach(evento => {
+    eventos.forEach((evento, index) => {
         const eventoCard = createEventoCard(evento);
+        // Adicionar delay de animação
+        eventoCard.style.animationDelay = `${index * 0.1}s`;
         eventosGrid.appendChild(eventoCard);
     });
+    
+    console.log(`${eventos.length} eventos adicionados ao grid`);
 }
 
 function createEventoCard(evento) {
@@ -148,7 +228,10 @@ function createEventoCard(evento) {
 }
 
 function applySorting() {
-    const sortValue = document.getElementById('sort-select').value;
+    const sortSelect = document.getElementById('sort-select');
+    if (!sortSelect) return;
+    
+    const sortValue = sortSelect.value;
     
     switch (sortValue) {
         case 'titulo':
@@ -163,51 +246,82 @@ function applySorting() {
             break;
     }
     
-    if (filteredEventos.length > 0) {
+    console.log('Eventos ordenados:', sortValue);
+    
+    // Só re-exibir se já temos eventos carregados
+    if (filteredEventos.length > 0 && !document.getElementById('loading').classList.contains('hidden') === false) {
         displayEventos();
     }
 }
 
 function updateEventsCount() {
     const eventsCount = document.getElementById('events-count');
-    const count = filteredEventos.length;
+    if (!eventsCount) return;
     
+    const count = filteredEventos.length;
     eventsCount.textContent = `${count} evento${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
 }
 
-function showLoading(show) {
-    const loading = document.getElementById('loading');
-    
-    if (show) {
-        loading.classList.remove('hidden');
-        hideStates();
-        document.getElementById('filter-bar').classList.add('hidden');
-        document.getElementById('eventos-grid').classList.add('hidden');
-        document.getElementById('featured-evento').classList.add('hidden');
-    } else {
-        loading.classList.add('hidden');
+function showFilterBar() {
+    const filterBar = document.getElementById('filter-bar');
+    if (filterBar) {
+        filterBar.classList.remove('hidden');
+    }
+}
+
+function showEventosGrid() {
+    const eventosGrid = document.getElementById('eventos-grid');
+    if (eventosGrid) {
+        eventosGrid.classList.remove('hidden');
+    }
+}
+
+function hideFeaturedEvento() {
+    const featuredEvento = document.getElementById('featured-evento');
+    if (featuredEvento) {
+        featuredEvento.classList.add('hidden');
     }
 }
 
 function showEmptyState() {
-    document.getElementById('empty-state').classList.remove('hidden');
-    document.getElementById('eventos-grid').classList.add('hidden');
-    document.getElementById('featured-evento').classList.add('hidden');
-    document.getElementById('filter-bar').classList.add('hidden');
-    document.getElementById('error-state').classList.add('hidden');
+    console.log('Mostrando estado vazio');
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState) {
+        emptyState.classList.remove('hidden');
+    }
+    
+    hideAllOtherStates();
 }
 
 function showErrorState() {
-    document.getElementById('error-state').classList.remove('hidden');
-    hideStates();
-    document.getElementById('filter-bar').classList.add('hidden');
+    console.log('Mostrando estado de erro');
+    const errorState = document.getElementById('error-state');
+    if (errorState) {
+        errorState.classList.remove('hidden');
+    }
+    
+    hideAllOtherStates();
 }
 
-function hideStates() {
-    document.getElementById('empty-state').classList.add('hidden');
-    document.getElementById('error-state').classList.add('hidden');
+function hideAllStates() {
+    const emptyState = document.getElementById('empty-state');
+    const errorState = document.getElementById('error-state');
+    
+    if (emptyState) emptyState.classList.add('hidden');
+    if (errorState) errorState.classList.add('hidden');
 }
 
+function hideAllOtherStates() {
+    const filterBar = document.getElementById('filter-bar');
+    const eventosGrid = document.getElementById('eventos-grid');
+    const featuredEvento = document.getElementById('featured-evento');
+    
+    if (filterBar) filterBar.classList.add('hidden');
+    if (eventosGrid) eventosGrid.classList.add('hidden');
+    if (featuredEvento) featuredEvento.classList.add('hidden');
+}
+
+// Funções utilitárias
 function truncateText(text, maxLength) {
     if (!text || text.length <= maxLength) {
         return text || '';
