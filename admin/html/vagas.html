@@ -165,6 +165,37 @@
         </div>
     </main>
 
+    <!-- Modal de Candidatos -->
+    <div id="candidatos-modal" class="modal hidden">
+        <div class="modal-content candidatos-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="candidatos-modal-title">👥 Candidatos</h3>
+                <button id="close-candidatos-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="candidatos-search">
+                    <input type="text" id="search-candidatos" class="form-input" 
+                           placeholder="Buscar candidato por nome...">
+                </div>
+                
+                <div id="candidatos-loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando candidatos...</p>
+                </div>
+                
+                <div id="candidatos-list" class="candidatos-list hidden">
+                    <!-- Candidatos serão carregados aqui -->
+                </div>
+                
+                <div id="candidatos-empty" class="empty-candidatos hidden">
+                    <div class="empty-icon">👥</div>
+                    <h3>Nenhum candidato encontrado</h3>
+                    <p>Esta vaga ainda não recebeu candidaturas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Alteração de Status -->
     <div id="status-modal" class="modal status-modal hidden">
         <div class="modal-content">

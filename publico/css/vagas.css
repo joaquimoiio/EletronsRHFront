@@ -178,6 +178,84 @@
     color: white;
 }
 
+/* Skeleton Cards Dinâmicos */
+.vaga-skeleton {
+    pointer-events: none;
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.skeleton-title {
+    height: 1.5rem;
+    width: 70%;
+    margin-bottom: 1rem;
+}
+
+.skeleton-area {
+    height: 1.2rem;
+    width: 30%;
+    border-radius: 12px;
+}
+
+.skeleton-text {
+    height: 1rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-text.short {
+    width: 75%;
+}
+
+.skeleton-date {
+    height: 0.9rem;
+    width: 40%;
+}
+
+.skeleton-status {
+    height: 0.9rem;
+    width: 30%;
+}
+
+.skeleton-button {
+    height: 2.5rem;
+    width: 120px;
+    border-radius: 8px;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Ajustes para o layout do skeleton */
+.vaga-skeleton .vaga-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.vaga-skeleton .vaga-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.vaga-skeleton .vaga-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;
@@ -221,54 +299,6 @@
     background: #c53030;
 }
 
-/* Loading Animation */
-.vagas-loading {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
-}
-
-.vaga-skeleton {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
-
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 4px;
-}
-
-.skeleton-title {
-    height: 1.5rem;
-    width: 70%;
-    margin-bottom: 1rem;
-}
-
-.skeleton-area {
-    height: 1rem;
-    width: 30%;
-    margin-bottom: 1rem;
-}
-
-.skeleton-text {
-    height: 1rem;
-    width: 100%;
-    margin-bottom: 0.5rem;
-}
-
-.skeleton-text:last-child {
-    width: 80%;
-}
-
-@keyframes loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
 /* Results Info */
 .results-info {
     display: flex;
@@ -304,6 +334,16 @@
     background: white;
 }
 
+/* Animations */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
 /* Responsivo */
 @media (max-width: 1024px) {
     .filter-bar {
@@ -326,8 +366,7 @@
         gap: 1rem;
     }
     
-    .vagas-grid,
-    .vagas-loading {
+    .vagas-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }

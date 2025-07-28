@@ -58,11 +58,14 @@ async function loadAreas() {
 
 async function loadVagas() {
     try {
-        showLoading(true);
+        showSkeletonLoading(true);
         hideStates();
         
         allVagas = await ApiUtils.get('/vagas/ativas');
         filteredVagas = [...allVagas];
+        
+        // Simular um pequeno delay para mostrar o skeleton
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         displayVagas();
         updateResultsInfo();
@@ -71,8 +74,57 @@ async function loadVagas() {
         console.error('Erro ao carregar vagas:', error);
         showErrorState();
     } finally {
-        showLoading(false);
+        showSkeletonLoading(false);
     }
+}
+
+function showSkeletonLoading(show) {
+    const vagasGrid = document.getElementById('vagas-grid');
+    const resultsInfo = document.getElementById('results-info');
+    
+    if (show) {
+        // Esconder outros estados
+        hideStates();
+        if (resultsInfo) resultsInfo.classList.add('hidden');
+        
+        // Criar skeleton cards
+        vagasGrid.innerHTML = '';
+        vagasGrid.classList.remove('hidden');
+        
+        // Adicionar 3 skeleton cards
+        for (let i = 0; i < 3; i++) {
+            const skeletonCard = createSkeletonCard();
+            vagasGrid.appendChild(skeletonCard);
+        }
+    } else {
+        // Limpar skeleton cards
+        const skeletonCards = vagasGrid.querySelectorAll('.vaga-skeleton');
+        skeletonCards.forEach(card => card.remove());
+    }
+}
+
+function createSkeletonCard() {
+    const card = document.createElement('div');
+    card.className = 'vaga-card vaga-skeleton';
+    
+    card.innerHTML = `
+        <div class="vaga-header">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-area"></div>
+        </div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text short"></div>
+        <div class="vaga-footer">
+            <div class="vaga-meta">
+                <div class="skeleton skeleton-date"></div>
+                <div class="skeleton skeleton-status"></div>
+            </div>
+            <div class="skeleton skeleton-button"></div>
+        </div>
+    `;
+    
+    return card;
 }
 
 function displayVagas() {
@@ -83,10 +135,13 @@ function displayVagas() {
         return;
     }
     
+    // Limpar grid (incluindo skeleton cards)
     vagasGrid.innerHTML = '';
     
-    filteredVagas.forEach(vaga => {
+    filteredVagas.forEach((vaga, index) => {
         const vagaCard = createVagaCard(vaga);
+        // Adicionar animação escalonada
+        vagaCard.style.animationDelay = `${index * 0.1}s`;
         vagasGrid.appendChild(vagaCard);
     });
     
@@ -180,17 +235,6 @@ function updateResultsInfo() {
         resultsText.textContent = `${count} vaga${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`;
     } else {
         resultsText.textContent = `${count} de ${total} vaga${total !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`;
-    }
-}
-
-function showLoading(show) {
-    const loading = document.getElementById('loading');
-    
-    if (show) {
-        loading.classList.remove('hidden');
-        hideStates();
-    } else {
-        loading.classList.add('hidden');
     }
 }
 

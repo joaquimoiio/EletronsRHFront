@@ -16,6 +16,7 @@ let allVagas = [];
 let filteredVagas = [];
 let vagaToDelete = null;
 let statusAction = null;
+let candidatosModalVaga = null;
 
 function setupEventListeners() {
     // Logout
@@ -61,6 +62,10 @@ function setupModalEvents() {
     document.getElementById('cancel-delete').addEventListener('click', closeDeleteModal);
     document.getElementById('confirm-delete').addEventListener('click', handleDeleteVaga);
     
+    // Modal de candidatos
+    document.getElementById('close-candidatos-modal').addEventListener('click', closeCandidatosModal);
+    document.getElementById('search-candidatos').addEventListener('input', debounce(searchCandidatos, 300));
+    
     // Fechar modais clicando fora
     document.getElementById('status-modal').addEventListener('click', function(e) {
         if (e.target === this) closeStatusModal();
@@ -68,6 +73,10 @@ function setupModalEvents() {
     
     document.getElementById('delete-modal').addEventListener('click', function(e) {
         if (e.target === this) closeDeleteModal();
+    });
+    
+    document.getElementById('candidatos-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeCandidatosModal();
     });
 }
 
@@ -126,9 +135,9 @@ async function loadStats() {
         const ativas = vagas.filter(v => v.status === 'ATIVA').length;
         const contratadas = vagas.filter(v => v.status === 'CONTRATADA').length;
         
-        // Calcular total de candidatos
+        // Calcular total de candidatos usando a nova estrutura de resposta DTO
         const totalCandidatos = vagas.reduce((total, vaga) => {
-            return total + (vaga.candidatos ? vaga.candidatos.length : 0);
+            return total + (vaga.candidatosCount || 0);
         }, 0);
         
         animateCounter('total-vagas', vagas.length);
@@ -175,7 +184,7 @@ function createVagaItem(vaga) {
     const description = vaga.descricao || 'Sem descrição';
     const truncatedDescription = truncateText(description, 150);
     
-    const candidatosCount = vaga.candidatos ? vaga.candidatos.length : 0;
+    const candidatosCount = vaga.candidatosCount || 0;
     
     div.innerHTML = `
         <div class="vaga-header">
@@ -192,6 +201,9 @@ function createVagaItem(vaga) {
         <p class="vaga-description">${escapeHtml(truncatedDescription)}</p>
         <div class="vaga-actions">
             <a href="editar-vaga.html?id=${vaga.id}" class="action-btn edit-btn">✏️ Editar</a>
+            <button class="action-btn candidatos-btn" onclick="openCandidatosModal(${vaga.id}, '${escapeHtml(vaga.titulo)}')">
+                👥 Candidatos (${candidatosCount})
+            </button>
             ${createStatusActions(vaga)}
             <button class="action-btn delete-btn" onclick="openDeleteModal(${vaga.id}, '${escapeHtml(vaga.titulo)}')">
                 🗑️ Excluir
@@ -229,6 +241,91 @@ function getStatusText(status) {
         'CONTRATADA': 'Contratada'
     };
     return statusMap[status] || status;
+}
+
+async function openCandidatosModal(vagaId, vagaTitle) {
+    candidatosModalVaga = vagaId;
+    document.getElementById('candidatos-modal-title').textContent = `Candidatos - ${vagaTitle}`;
+    document.getElementById('candidatos-modal').classList.remove('hidden');
+    document.getElementById('search-candidatos').value = '';
+    
+    await loadCandidatos(vagaId);
+}
+
+function closeCandidatosModal() {
+    document.getElementById('candidatos-modal').classList.add('hidden');
+    candidatosModalVaga = null;
+}
+
+async function loadCandidatos(vagaId, filtro = '') {
+    try {
+        document.getElementById('candidatos-loading').classList.remove('hidden');
+        document.getElementById('candidatos-list').classList.add('hidden');
+        document.getElementById('candidatos-empty').classList.add('hidden');
+        
+        const params = filtro ? `?filtro=${encodeURIComponent(filtro)}` : '';
+        const candidatos = await ApiUtils.get(`/vagas/${vagaId}/candidatos${params}`);
+        
+        displayCandidatos(candidatos);
+        
+    } catch (error) {
+        console.error('Erro ao carregar candidatos:', error);
+        showMessage('Erro ao carregar candidatos.', 'error');
+    } finally {
+        document.getElementById('candidatos-loading').classList.add('hidden');
+    }
+}
+
+function displayCandidatos(candidatos) {
+    const candidatosList = document.getElementById('candidatos-list');
+    const candidatosEmpty = document.getElementById('candidatos-empty');
+    
+    if (candidatos.length === 0) {
+        candidatosList.classList.add('hidden');
+        candidatosEmpty.classList.remove('hidden');
+        return;
+    }
+    
+    candidatosList.innerHTML = '';
+    
+    candidatos.forEach(candidato => {
+        const candidatoItem = createCandidatoItem(candidato);
+        candidatosList.appendChild(candidatoItem);
+    });
+    
+    candidatosList.classList.remove('hidden');
+    candidatosEmpty.classList.add('hidden');
+}
+
+function createCandidatoItem(candidato) {
+    const div = document.createElement('div');
+    div.className = 'candidato-item';
+    
+    const dataInscricao = formatDate(candidato.dataInscricao);
+    const temCurriculo = candidato.caminhoCurriculo ? true : false;
+    
+    div.innerHTML = `
+        <div class="candidato-header">
+            <h5 class="candidato-nome">${escapeHtml(candidato.nome)}</h5>
+            <span class="candidato-data">${dataInscricao}</span>
+        </div>
+        <div class="candidato-info">
+            <span class="candidato-email">${escapeHtml(candidato.email)}</span>
+            ${temCurriculo ? 
+                `<a href="${ApiUtils.getUploadUrl(candidato.caminhoCurriculo)}" target="_blank" class="curriculo-link">📄 Ver Currículo</a>` : 
+                '<span class="no-curriculo">📄 Sem currículo</span>'
+            }
+        </div>
+    `;
+    
+    return div;
+}
+
+async function searchCandidatos() {
+    if (!candidatosModalVaga) return;
+    
+    const filtro = document.getElementById('search-candidatos').value.trim();
+    await loadCandidatos(candidatosModalVaga, filtro);
 }
 
 async function handleCreateVaga(e) {
@@ -540,6 +637,21 @@ function truncateText(text, maxLength) {
     return text.substring(0, maxLength).trim() + '...';
 }
 
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+}
+
 function animateCounter(elementId, targetValue) {
     const element = document.getElementById(elementId);
     if (!element) return;
@@ -557,4 +669,16 @@ function animateCounter(elementId, targetValue) {
         }
         element.textContent = currentValue;
     }, stepTime);
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }

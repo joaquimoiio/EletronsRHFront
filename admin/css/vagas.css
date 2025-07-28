@@ -211,6 +211,16 @@
     text-decoration: none;
 }
 
+.candidatos-btn {
+    background: #38a169;
+    color: white;
+}
+
+.candidatos-btn:hover {
+    background: #2f855a;
+    transform: translateY(-1px);
+}
+
 .status-btn {
     background: #ed8936;
     color: white;
@@ -305,6 +315,116 @@
     padding: 3rem 2rem;
     text-align: center;
     color: #4a5568;
+}
+
+/* Modal de Candidatos */
+.candidatos-modal-content {
+    max-width: 800px;
+    width: 90%;
+}
+
+.candidatos-search {
+    margin-bottom: 1.5rem;
+}
+
+.candidatos-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.candidato-item {
+    padding: 1.5rem;
+    border-bottom: 1px solid #f7fafc;
+    transition: all 0.3s ease;
+}
+
+.candidato-item:hover {
+    background: #f8f9fa;
+}
+
+.candidato-item:last-child {
+    border-bottom: none;
+}
+
+.candidato-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.candidato-nome {
+    font-size: 1.1rem;
+    color: #1a365d;
+    margin: 0;
+    font-weight: 600;
+}
+
+.candidato-data {
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.candidato-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.candidato-email {
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.curriculo-link {
+    background: #3182ce;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.curriculo-link:hover {
+    background: #2c5aa0;
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: white;
+}
+
+.no-curriculo {
+    color: #a0aec0;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.empty-candidatos {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #4a5568;
+}
+
+.empty-candidatos .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-candidatos h3 {
+    font-size: 1.2rem;
+    color: #1a365d;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.empty-candidatos p {
+    font-size: 0.9rem;
+    color: #718096;
 }
 
 /* Modal Específico */
@@ -427,6 +547,18 @@
     .action-btn {
         width: 100%;
     }
+    
+    .candidato-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .candidato-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -440,5 +572,10 @@
     
     .form-row {
         gap: 1rem;
+    }
+    
+    .candidatos-modal-content {
+        margin: 1rem;
+        width: calc(100% - 2rem);
     }
 }
