@@ -107,21 +107,33 @@ function formatDescription(description) {
 }
 
 async function loadGaleria(eventoId) {
+    const galeriaGrid = document.getElementById('galeria-grid');
+    const emptyGaleria = document.getElementById('empty-galeria');
+    
     try {
         console.log('Carregando galeria para evento ID:', eventoId);
-        showGaleriaLoading(true);
         
-        imagens = await ApiUtils.get(`/eventos/${eventoId}/imagens`);
-        console.log('Imagens carregadas:', imagens);
         
+        // Fazer requisição à API
+        const response = await ApiUtils.get(`/eventos/${eventoId}/imagens`);
+        console.log('Resposta da API de imagens:', response);
+        
+        // Garantir que imagens é um array
+        imagens = Array.isArray(response) ? response : [];
+        console.log('Imagens processadas:', imagens);
+        
+        // Pequeno delay para mostrar que o loading está funcionando
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Depois exibir o conteúdo apropriado
         displayGaleria();
-        showGaleriaLoading(false);
         
     } catch (error) {
         console.error('Erro ao carregar galeria:', error);
+        
+        // Definir array vazio e exibir estado vazio
         imagens = [];
         displayGaleria();
-        showGaleriaLoading(false);
     }
 }
 
@@ -134,11 +146,15 @@ function displayGaleria() {
         return;
     }
     
+    console.log(`Exibindo galeria com ${imagens.length} imagens`);
+    
     if (imagens.length === 0) {
+        // Mostrar estado vazio
         galeriaGrid.classList.add('hidden');
         if (emptyGaleria) {
             emptyGaleria.classList.remove('hidden');
         }
+        console.log('Mostrando estado vazio da galeria');
         return;
     }
     
@@ -151,6 +167,7 @@ function displayGaleria() {
         galeriaGrid.appendChild(fotoCard);
     });
     
+    // Mostrar grid e esconder estado vazio
     galeriaGrid.classList.remove('hidden');
     if (emptyGaleria) {
         emptyGaleria.classList.add('hidden');
@@ -164,14 +181,19 @@ function createFotoCard(imagem, index) {
     card.className = 'foto-card fade-in';
     card.style.animationDelay = `${index * 0.1}s`;
     
+    // Gerar URL da imagem
+    const imageUrl = ApiUtils.getUploadUrl(imagem.caminhoArquivo);
+    console.log(`Criando card para imagem: ${imageUrl}`);
+    
     // Card simplificado - apenas imagem e botão de expandir
     card.innerHTML = `
         <div class="foto-image-container">
-            <img src="${ApiUtils.getUploadUrl(imagem.caminhoArquivo)}" 
+            <img src="${imageUrl}" 
                  alt="Foto do evento" 
                  class="foto-image"
                  loading="lazy"
-                 onerror="this.parentElement.parentElement.style.display='none'">
+                 onload="console.log('Imagem carregada:', this.src)"
+                 onerror="console.error('Erro ao carregar imagem:', this.src); this.parentElement.parentElement.style.display='none'">
             <div class="foto-overlay">
                 <button class="foto-expand-btn" onclick="openPhotoModal('${escapeHtml(imagem.caminhoArquivo)}', '${escapeHtml(imagem.nomeArquivo)}')">
                     🔍 Ver ampliada
@@ -181,18 +203,6 @@ function createFotoCard(imagem, index) {
     `;
     
     return card;
-}
-
-function showGaleriaLoading(show) {
-    const galeriaLoading = document.getElementById('galeria-loading');
-    const galeriaGrid = document.getElementById('galeria-grid');
-    
-    if (show) {
-        if (galeriaLoading) galeriaLoading.classList.remove('hidden');
-        if (galeriaGrid) galeriaGrid.classList.add('hidden');
-    } else {
-        if (galeriaLoading) galeriaLoading.classList.add('hidden');
-    }
 }
 
 // Modal para foto expandida (opcional)
