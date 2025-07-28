@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Eventos - Sistema RH</title>
+    <link href="../css/global.css" rel="stylesheet">
+    <link href="../css/eventos.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH Admin</h1>
+                <nav class="nav">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="areas.html" class="nav-link">Áreas</a>
+                    <a href="vagas.html" class="nav-link">Vagas</a>
+                    <a href="eventos.html" class="nav-link active">Eventos</a>
+                </nav>
+                <div class="user-menu">
+                    <span class="welcome">Olá, <span id="username">Admin</span>!</span>
+                    <button id="logout-btn" class="logout-btn">Sair</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Gerenciar Eventos</h1>
+                <p class="page-subtitle">Crie e gerencie eventos corporativos com galeria de fotos</p>
+            </div>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-eventos">0</div>
+                        <div class="stat-label">Total de Eventos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="eventos-com-fotos">0</div>
+                        <div class="stat-label">Com Galeria</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-fotos">0</div>
+                        <div class="stat-label">Total de Fotos</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="content-layout">
+                <!-- Form Section -->
+                <section class="form-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🎉 Novo Evento</h3>
+                        </div>
+                        
+                        <form id="evento-form" class="evento-form" enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="evento-titulo" class="form-label">Título do Evento *</label>
+                                    <input type="text" id="evento-titulo" name="titulo" class="form-input" required 
+                                           placeholder="Ex: Workshop de Desenvolvimento, Confraternização..."
+                                           maxlength="200">
+                                    <div id="titulo-feedback" class="input-feedback hidden"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="evento-capa" class="form-label">Imagem de Capa (opcional)</label>
+                                    <input type="file" id="evento-capa" name="imagemCapa" class="form-input file-input" 
+                                           accept="image/*">
+                                    <div class="file-help">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB</div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn">
+                                <span class="btn-text">🚀 Criar Evento</span>
+                                <span class="btn-loading hidden">Criando...</span>
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Events List -->
+                <section class="eventos-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📋 Eventos Criados</h3>
+                            <span id="eventos-counter" class="counter">0 eventos</span>
+                        </div>
+                        
+                        <div id="loading" class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Carregando eventos...</p>
+                        </div>
+
+                        <div id="eventos-list" class="eventos-list hidden">
+                            <!-- Eventos serão carregados aqui -->
+                        </div>
+
+                        <div id="empty-state" class="empty-state hidden">
+                            <div class="empty-icon">🎉</div>
+                            <h3>Nenhum evento cadastrado</h3>
+                            <p>Comece criando o primeiro evento da empresa</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Edição de Evento -->
+    <div id="edit-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">✏️ Editar Evento</h3>
+                <button id="close-edit-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-form" class="edit-form">
+                    <input type="hidden" id="edit-evento-id">
+                    <div class="form-group">
+                        <label for="edit-evento-descricao" class="form-label">Descrição do Evento</label>
+                        <textarea id="edit-evento-descricao" name="descricao" class="form-input form-textarea" 
+                                  rows="6" placeholder="Descreva o evento, atividades realizadas, objetivos..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-edit" class="btn btn-secondary">Cancelar</button>
+                <button type="submit" form="edit-form" class="btn btn-primary">
+                    <span class="btn-text">Salvar Alterações</span>
+                    <span class="btn-loading hidden">Salvando...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Galeria -->
+    <div id="gallery-modal" class="modal hidden">
+        <div class="modal-content gallery-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📸 Galeria do Evento</h3>
+                <button id="close-gallery-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-section">
+                    <form id="upload-form" class="upload-form" enctype="multipart/form-data">
+                        <input type="hidden" id="gallery-evento-id">
+                        <div class="form-group">
+                            <label for="gallery-imagem" class="form-label">Adicionar Foto</label>
+                            <input type="file" id="gallery-imagem" name="imagem" class="form-input file-input" 
+                                   accept="image/*" required>
+                            <div class="file-help">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB</div>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <span class="btn-text">📷 Adicionar Foto</span>
+                            <span class="btn-loading hidden">Enviando...</span>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="gallery-grid" id="gallery-images">
+                    <!-- Imagens serão carregadas aqui -->
+                </div>
+                
+                <div id="gallery-empty" class="empty-gallery hidden">
+                    <p>Nenhuma foto adicionada ainda</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="delete-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🗑️ Confirmar Exclusão</h3>
+                <button id="close-delete-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o evento <strong id="delete-evento-title"></strong>?</p>
+                <p style="color: #e53e3e; font-size: 0.9rem; margin-top: 1rem;">
+                    ⚠️ Esta ação não pode ser desfeita e todas as imagens do evento serão perdidas.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-delete" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="confirm-delete" class="btn btn-danger">
+                    <span class="btn-text">Excluir Evento</span>
+                    <span class="btn-loading hidden">Excluindo...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/eventos.js"></script>
+</body>
+</html>

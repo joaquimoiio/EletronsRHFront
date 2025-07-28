@@ -56,6 +56,32 @@ async function loadAreas() {
         updateCounter();
         
     } catch (error) {
+        console.error('Erro ao carregar áreas:', error);
+        showMessage('Erro ao carregar áreas. Tente novamente.', 'error');
+        showEmptyState();
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function loadStats() {
+    try {
+        const [allAreas, allVagas] = await Promise.all([
+            ApiUtils.get('/areas'),
+            ApiUtils.get('/vagas')
+        ]);
+        
+        // Contar áreas com vagas
+        const areasComVagas = allAreas.filter(area => 
+            allVagas.some(vaga => vaga.area.id === area.id)
+        ).length;
+        
+        // Animar contadores
+        animateCounter('total-areas', allAreas.length);
+        animateCounter('areas-com-vagas', areasComVagas);
+        animateCounter('total-vagas-areas', allVagas.length);
+        
+    } catch (error) {
         console.error('Erro ao carregar estatísticas:', error);
         // Valores padrão em caso de erro
         document.getElementById('total-areas').textContent = '0';
@@ -352,30 +378,4 @@ function animateCounter(elementId, targetValue) {
         }
         element.textContent = currentValue;
     }, stepTime);
-}egar áreas:', error);
-        showMessage('Erro ao carregar áreas. Tente novamente.', 'error');
-        showEmptyState();
-    } finally {
-        showLoading(false);
-    }
 }
-
-async function loadStats() {
-    try {
-        const [allAreas, allVagas] = await Promise.all([
-            ApiUtils.get('/areas'),
-            ApiUtils.get('/vagas')
-        ]);
-        
-        // Contar áreas com vagas
-        const areasComVagas = allAreas.filter(area => 
-            allVagas.some(vaga => vaga.area.id === area.id)
-        ).length;
-        
-        // Animar contadores
-        animateCounter('total-areas', allAreas.length);
-        animateCounter('areas-com-vagas', areasComVagas);
-        animateCounter('total-vagas-areas', allVagas.length);
-        
-    } catch (error) {
-        console.error('Erro ao carr
