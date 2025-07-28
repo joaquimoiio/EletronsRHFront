@@ -57,14 +57,9 @@ function displayEventoDetails(evento) {
     // Atualizar data
     const dataFormatada = formatDate(evento.dataCriacao);
     const eventoData = document.getElementById('evento-data');
-    const infoData = document.getElementById('info-data');
     
     if (eventoData) {
         eventoData.textContent = `Criado em: ${dataFormatada}`;
-    }
-    
-    if (infoData) {
-        infoData.textContent = dataFormatada;
     }
     
     // Atualizar descrição
@@ -120,14 +115,12 @@ async function loadGaleria(eventoId) {
         console.log('Imagens carregadas:', imagens);
         
         displayGaleria();
-        updateImagensCount();
         showGaleriaLoading(false);
         
     } catch (error) {
         console.error('Erro ao carregar galeria:', error);
         imagens = [];
         displayGaleria();
-        updateImagensCount();
         showGaleriaLoading(false);
     }
 }
@@ -171,13 +164,11 @@ function createFotoCard(imagem, index) {
     card.className = 'foto-card fade-in';
     card.style.animationDelay = `${index * 0.1}s`;
     
-    // Nome do arquivo sem extensão para exibição
-    const nomeExibicao = imagem.nomeArquivo.replace(/\.[^/.]+$/, "");
-    
+    // Card simplificado - apenas imagem e botão de expandir
     card.innerHTML = `
         <div class="foto-image-container">
             <img src="${ApiUtils.getUploadUrl(imagem.caminhoArquivo)}" 
-                 alt="${escapeHtml(imagem.nomeArquivo)}" 
+                 alt="Foto do evento" 
                  class="foto-image"
                  loading="lazy"
                  onerror="this.parentElement.parentElement.style.display='none'">
@@ -187,21 +178,9 @@ function createFotoCard(imagem, index) {
                 </button>
             </div>
         </div>
-        <div class="foto-info">
-            <h4 class="foto-title">${escapeHtml(nomeExibicao)}</h4>
-            <span class="foto-number">Foto ${index + 1} de ${imagens.length}</span>
-        </div>
     `;
     
     return card;
-}
-
-function updateImagensCount() {
-    const infoImagens = document.getElementById('info-imagens');
-    if (infoImagens) {
-        const count = imagens.length;
-        infoImagens.textContent = `${count} foto${count !== 1 ? 's' : ''}`;
-    }
 }
 
 function showGaleriaLoading(show) {
@@ -224,7 +203,7 @@ function openPhotoModal(caminhoArquivo, nomeArquivo) {
     
     if (modal && modalPhoto) {
         modalPhoto.src = ApiUtils.getUploadUrl(caminhoArquivo);
-        modalPhoto.alt = nomeArquivo;
+        modalPhoto.alt = 'Foto do evento';
         
         if (modalPhotoName) {
             modalPhotoName.textContent = nomeArquivo;
