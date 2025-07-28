@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Redirecionar após um breve delay
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'areas.html';
                 }, 500);
                 
             } else {
