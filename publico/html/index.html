@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema RH - Carreiras e Oportunidades</title>
+    <link href="../css/global.css" rel="stylesheet">
     <link href="../css/home.css" rel="stylesheet">
 </head>
 <body>
@@ -21,68 +22,74 @@
     </header>
 
     <main>
+        <!-- Hero Section -->
         <section class="hero">
             <div class="container">
-                <div class="hero-content">
-                    <h2>Encontre sua próxima oportunidade</h2>
+                <div class="hero-content animate-in">
+                    <h1>Encontre sua próxima oportunidade</h1>
                     <p>Junte-se à nossa equipe e faça parte de uma empresa que valoriza pessoas e investe no futuro.</p>
                     <div class="hero-actions">
-                        <a href="vagas.html" class="btn-primary">Ver Vagas Abertas</a>
-                        <a href="eventos.html" class="btn-secondary">Nossos Eventos</a>
+                        <a href="vagas.html" class="btn btn-primary">Ver Vagas Abertas</a>
+                        <a href="eventos.html" class="btn btn-secondary">Nossos Eventos</a>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Features Section -->
         <section class="features">
             <div class="container">
-                <h3>Por que trabalhar conosco?</h3>
+                <h2>Por que trabalhar conosco?</h2>
                 <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">🚀</div>
-                        <h4>Crescimento Profissional</h4>
-                        <p>Oportunidades reais de desenvolvimento e crescimento na carreira</p>
+                    <div class="feature-card animate-in">
+                        <span class="feature-icon">🚀</span>
+                        <h3>Crescimento Profissional</h3>
+                        <p>Oportunidades reais de desenvolvimento e crescimento na carreira com planos estruturados de evolução.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">💡</div>
-                        <h4>Ambiente Inovador</h4>
-                        <p>Trabalhe com tecnologias modernas e metodologias ágeis</p>
+                    <div class="feature-card animate-in">
+                        <span class="feature-icon">💡</span>
+                        <h3>Ambiente Inovador</h3>
+                        <p>Trabalhe com tecnologias modernas e metodologias ágeis em um ambiente que estimula a criatividade.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🤝</div>
-                        <h4>Equipe Colaborativa</h4>
-                        <p>Faça parte de um time unido que valoriza a colaboração</p>
+                    <div class="feature-card animate-in">
+                        <span class="feature-icon">🤝</span>
+                        <h3>Equipe Colaborativa</h3>
+                        <p>Faça parte de um time unido que valoriza a colaboração e o crescimento conjunto.</p>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Stats Section -->
         <section class="stats">
             <div class="container">
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number" id="vagas-count">-</div>
+                        <span class="stat-number" id="vagas-count">0</span>
                         <div class="stat-label">Vagas Abertas</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" id="areas-count">-</div>
+                        <span class="stat-number" id="areas-count">0</span>
                         <div class="stat-label">Áreas de Atuação</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" id="eventos-count">-</div>
+                        <span class="stat-number" id="eventos-count">0</span>
                         <div class="stat-label">Eventos do Mês</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="candidatos-count">0</span>
+                        <div class="stat-label">Candidatos</div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- CTA Section -->
         <section class="cta">
             <div class="container">
-                <div class="cta-content">
-                    <h3>Não encontrou a vaga ideal?</h3>
-                    <p>Cadastre-se para receber notificações quando novas oportunidades surgirem.</p>
-                    <button id="notify-btn" class="btn-primary">Quero ser notificado</button>
-                </div>
+                <h2>Não encontrou a vaga ideal?</h2>
+                <p>Cadastre-se para receber notificações quando novas oportunidades surgirem na sua área de interesse.</p>
+                <button id="notify-btn" class="btn btn-primary">Quero ser notificado</button>
             </div>
         </section>
     </main>
@@ -98,29 +105,32 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Receber Notificações</h3>
-                <button id="close-notify-modal" class="close-btn">&times;</button>
+                <button id="close-modal" class="close-btn">&times;</button>
             </div>
-            <form id="notify-form" class="notify-form">
-                <div class="input-group">
-                    <label for="notify-email">Seu e-mail</label>
-                    <input type="email" id="notify-email" name="email" required 
-                           placeholder="seu@email.com">
-                </div>
-                <div class="input-group">
-                    <label for="notify-area">Área de interesse (opcional)</label>
-                    <select id="notify-area" name="area">
-                        <option value="">Todas as áreas</option>
-                        <!-- Áreas serão carregadas via JS -->
-                    </select>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" id="cancel-notify" class="cancel-btn">Cancelar</button>
-                    <button type="submit" class="submit-btn">Cadastrar</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="notify-form">
+                    <div class="form-group">
+                        <label for="notify-email" class="form-label">Seu e-mail</label>
+                        <input type="email" id="notify-email" name="email" class="form-input" required 
+                               placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="notify-area" class="form-label">Área de interesse (opcional)</label>
+                        <select id="notify-area" name="area" class="form-input form-select">
+                            <option value="">Todas as áreas</option>
+                            <!-- Áreas serão carregadas via JS -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-notify" class="btn btn-secondary">Cancelar</button>
+                <button type="submit" form="notify-form" class="btn btn-primary">Cadastrar</button>
+            </div>
         </div>
     </div>
 
+    <script src="../js/config.js"></script>
     <script src="../js/home.js"></script>
 </body>
 </html>

@@ -1,36 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Incluir o config.js
-    loadScript('../js/config.js').then(() => {
-        // Obter ID do evento da URL
-        const eventoId = getEventoIdFromURL();
-        
-        if (!eventoId) {
-            showErrorState();
-            return;
-        }
-        
-        // Configurar eventos
-        setupEventListeners();
-        
-        // Carregar dados do evento
-        loadEventoDetails(eventoId);
-        loadGaleria(eventoId);
-    });
+    // Obter ID do evento da URL
+    const eventoId = getEventoIdFromURL();
+    
+    if (!eventoId) {
+        showErrorState();
+        return;
+    }
+    
+    // Configurar eventos
+    setupEventListeners();
+    
+    // Carregar dados do evento
+    loadEventoDetails(eventoId);
+    loadGaleria(eventoId);
 });
 
 let currentEvento = null;
 let imagens = [];
 let currentImageIndex = 0;
-
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
 
 function getEventoIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -83,16 +70,16 @@ async function loadEventoDetails(eventoId) {
 function displayEventoDetails(evento) {
     // Atualizar título e breadcrumb
     document.getElementById('breadcrumb-title').textContent = evento.titulo;
-    document.getElementById('evento-titulo').textContent = evento.titulo;
+    document.getElementById('evento-title').textContent = evento.titulo;
     document.title = `${evento.titulo} - Sistema RH`;
     
     // Atualizar data
     const dataFormatada = formatDate(evento.dataCriacao);
-    document.getElementById('evento-data').textContent = `Criado em ${dataFormatada}`;
-    document.getElementById('info-data').textContent = dataFormatada;
+    document.getElementById('evento-date').textContent = `Criado em: ${dataFormatada}`;
+    document.getElementById('info-date').textContent = dataFormatada;
     
     // Atualizar descrição
-    const descricaoElement = document.getElementById('evento-descricao');
+    const descricaoElement = document.getElementById('evento-description');
     if (evento.descricao && evento.descricao.trim()) {
         descricaoElement.innerHTML = formatDescription(evento.descricao);
     } else {
@@ -107,9 +94,18 @@ function displayEventoDetails(evento) {
         document.getElementById('placeholder-capa').style.display = 'none';
     }
     
-    // Mostrar conteúdo
-    document.getElementById('loading').classList.add('hidden');
+    // Mostrar conteúdo com animação
+    document.getElementById('loading-section').classList.add('hidden');
     document.getElementById('evento-content').classList.remove('hidden');
+    
+    // Aplicar animações
+    setTimeout(() => {
+        document.querySelectorAll('.slide-up').forEach((el, index) => {
+            setTimeout(() => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            }, index * 100);
+        });
+    }, 100);
 }
 
 function formatDescription(description) {
@@ -133,6 +129,8 @@ async function loadGaleria(eventoId) {
         imagens = [];
         displayGaleria();
         updateImagensCount();
+    } finally {
+        document.getElementById('galeria-loading').classList.add('hidden');
     }
 }
 
@@ -141,7 +139,7 @@ function displayGaleria() {
     const emptyGaleria = document.getElementById('empty-galeria');
     
     if (imagens.length === 0) {
-        galeriaGrid.innerHTML = '';
+        galeriaGrid.classList.add('hidden');
         emptyGaleria.classList.remove('hidden');
         return;
     }
@@ -153,12 +151,14 @@ function displayGaleria() {
         galeriaGrid.appendChild(imagemItem);
     });
     
+    galeriaGrid.classList.remove('hidden');
     emptyGaleria.classList.add('hidden');
 }
 
 function createGaleriaItem(imagem, index) {
     const div = document.createElement('div');
-    div.className = 'galeria-item';
+    div.className = 'galeria-item fade-in';
+    div.style.animationDelay = `${index * 0.05}s`;
     div.onclick = () => openImageModal(index);
     
     div.innerHTML = `
@@ -172,7 +172,8 @@ function createGaleriaItem(imagem, index) {
 }
 
 function updateImagensCount() {
-    document.getElementById('info-imagens').textContent = `${imagens.length} foto${imagens.length !== 1 ? 's' : ''}`;
+    const count = imagens.length;
+    document.getElementById('info-imagens').textContent = `${count} foto${count !== 1 ? 's' : ''}`;
 }
 
 function openImageModal(imageIndex) {
@@ -182,12 +183,8 @@ function openImageModal(imageIndex) {
     updateModalImage();
     document.getElementById('image-modal').classList.remove('hidden');
     
-    // Mostrar/ocultar botões de navegação
-    const prevBtn = document.getElementById('prev-image');
-    const nextBtn = document.getElementById('next-image');
-    
-    prevBtn.style.display = imagens.length > 1 ? 'block' : 'none';
-    nextBtn.style.display = imagens.length > 1 ? 'block' : 'none';
+    // Controlar botões de navegação
+    updateNavigationButtons();
 }
 
 function closeImageModal() {
@@ -206,18 +203,41 @@ function navigateImage(direction) {
     }
     
     updateModalImage();
+    updateNavigationButtons();
 }
 
 function updateModalImage() {
     if (currentImageIndex >= 0 && currentImageIndex < imagens.length) {
         const imagem = imagens[currentImageIndex];
-        document.getElementById('modal-image').src = ApiUtils.getUploadUrl(imagem.caminhoArquivo);
+        const modalImage = document.getElementById('modal-image');
+        modalImage.src = ApiUtils.getUploadUrl(imagem.caminhoArquivo);
+        modalImage.alt = imagem.nomeArquivo;
+        
+        // Atualizar contador
+        document.getElementById('modal-counter').textContent = 
+            `${currentImageIndex + 1} / ${imagens.length}`;
+    }
+}
+
+function updateNavigationButtons() {
+    const prevBtn = document.getElementById('prev-image');
+    const nextBtn = document.getElementById('next-image');
+    
+    if (imagens.length <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+    } else {
+        prevBtn.style.display = 'block';
+        nextBtn.style.display = 'block';
+        
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
     }
 }
 
 function showErrorState() {
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('error-state').classList.remove('hidden');
+    document.getElementById('loading-section').classList.add('hidden');
+    document.getElementById('error-section').classList.remove('hidden');
 }
 
 function formatDate(dateString) {

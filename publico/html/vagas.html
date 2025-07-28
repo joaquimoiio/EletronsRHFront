@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vagas de Emprego - Sistema RH</title>
+    <link href="../css/global.css" rel="stylesheet">
     <link href="../css/vagas.css" rel="stylesheet">
 </head>
 <body>
@@ -21,46 +22,104 @@
     </header>
 
     <main>
-        <section class="page-hero">
+        <!-- Page Header -->
+        <section class="page-header">
             <div class="container">
-                <h2>Oportunidades de Carreira</h2>
+                <h1>Oportunidades de Carreira</h1>
                 <p>Encontre a vaga perfeita para o seu perfil e faça parte do nosso time</p>
             </div>
         </section>
 
+        <!-- Filters -->
         <section class="filters">
             <div class="container">
                 <div class="filter-bar">
                     <div class="filter-group">
-                        <label for="area-filter">Filtrar por área:</label>
-                        <select id="area-filter">
+                        <label for="area-filter" class="form-label">Área:</label>
+                        <select id="area-filter" class="form-input form-select">
                             <option value="">Todas as áreas</option>
                         </select>
                     </div>
-                    <div class="search-group">
-                        <input type="text" id="search-input" placeholder="Buscar por título da vaga...">
-                        <button id="search-btn">Buscar</button>
+                    
+                    <div class="filter-group">
+                        <label for="sort-filter" class="form-label">Ordenar por:</label>
+                        <select id="sort-filter" class="form-input form-select">
+                            <option value="recente">Mais recentes</option>
+                            <option value="titulo">Título A-Z</option>
+                            <option value="area">Área</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="search-input" class="form-label">Buscar:</label>
+                        <div class="search-group">
+                            <input type="text" id="search-input" class="form-input search-input" 
+                                   placeholder="Digite o título da vaga...">
+                            <button id="search-btn" class="search-btn">Buscar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">&nbsp;</label>
+                        <button id="clear-filters" class="btn btn-secondary">Limpar Filtros</button>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Results Info -->
         <section class="vagas-section">
             <div class="container">
-                <div id="loading" class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>Carregando vagas...</p>
+                <div id="results-info" class="results-info hidden">
+                    <div class="results-count">
+                        <span id="results-text">Carregando vagas...</span>
+                    </div>
                 </div>
 
+                <!-- Loading -->
+                <div id="loading" class="vagas-loading">
+                    <div class="vaga-skeleton">
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-area"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+                    <div class="vaga-skeleton">
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-area"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+                    <div class="vaga-skeleton">
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-area"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+                </div>
+
+                <!-- Vagas Grid -->
                 <div id="vagas-grid" class="vagas-grid hidden">
-                    <!-- Vagas serão carregadas aqui -->
+                    <!-- Vagas serão carregadas aqui via JavaScript -->
                 </div>
 
+                <!-- Empty State -->
                 <div id="empty-state" class="empty-state hidden">
                     <div class="empty-icon">📋</div>
                     <h3>Nenhuma vaga encontrada</h3>
-                    <p>Não há vagas disponíveis no momento ou que correspondam aos seus critérios de busca.</p>
-                    <button id="clear-filters" class="btn-secondary">Limpar Filtros</button>
+                    <p>Não há vagas disponíveis no momento ou que correspondam aos seus critérios de busca. Tente ajustar os filtros ou volte mais tarde.</p>
+                    <button id="empty-clear-filters" class="clear-filters-btn">Limpar Filtros</button>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state" class="empty-state hidden">
+                    <div class="empty-icon">⚠️</div>
+                    <h3>Erro ao carregar vagas</h3>
+                    <p>Ocorreu um erro ao carregar as vagas. Verifique sua conexão e tente novamente.</p>
+                    <button id="retry-btn" class="btn btn-primary">Tentar Novamente</button>
                 </div>
             </div>
         </section>
@@ -72,6 +131,7 @@
         </div>
     </footer>
 
+    <script src="../js/config.js"></script>
     <script src="../js/vagas.js"></script>
 </body>
 </html>

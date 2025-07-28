@@ -1,39 +1,105 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Variáveis globais
+    let allEventos = [];
+    let filteredEventos = [];
+    
+    // Configurar eventos
+    setupEventListeners();
+    
     // Carregar eventos
     loadEventos();
 });
 
-let eventos = [];
+function setupEventListeners() {
+    // Sort
+    document.getElementById('sort-select').addEventListener('change', applySorting);
+    
+    // Retry
+    document.getElementById('retry-btn').addEventListener('click', loadEventos);
+}
 
 async function loadEventos() {
     try {
         showLoading(true);
+        hideStates();
         
-        const response = await fetch('/api/eventos');
-        if (!response.ok) {
-            throw new Error('Erro ao carregar eventos');
-        }
+        allEventos = await ApiUtils.get('/eventos');
+        filteredEventos = [...allEventos];
         
-        eventos = await response.json();
+        applySorting();
         displayEventos();
+        updateEventsCount();
         
     } catch (error) {
         console.error('Erro ao carregar eventos:', error);
-        showEmptyState();
+        showErrorState();
     } finally {
         showLoading(false);
     }
 }
 
 function displayEventos() {
-    const eventosGrid = document.getElementById('eventos-grid');
-    const emptyState = document.getElementById('empty-state');
-    
-    if (eventos.length === 0) {
-        eventosGrid.classList.add('hidden');
-        emptyState.classList.remove('hidden');
+    if (filteredEventos.length === 0) {
+        showEmptyState();
         return;
     }
+    
+    // Mostrar featured event se houver eventos
+    if (filteredEventos.length > 0) {
+        displayFeaturedEvento(filteredEventos[0]);
+        displayRegularEventos(filteredEventos.slice(1));
+    }
+    
+    // Mostrar elementos
+    document.getElementById('filter-bar').classList.remove('hidden');
+    document.getElementById('eventos-grid').classList.remove('hidden');
+    
+    if (filteredEventos.length > 1) {
+        document.getElementById('featured-evento').classList.remove('hidden');
+    }
+    
+    hideStates();
+}
+
+function displayFeaturedEvento(evento) {
+    const featuredContainer = document.getElementById('featured-evento');
+    
+    if (!evento) {
+        featuredContainer.classList.add('hidden');
+        return;
+    }
+    
+    const description = evento.descricao || 'Aguarde mais informações sobre este evento em breve.';
+    const truncatedDescription = truncateText(description, 200);
+    
+    // Determinar imagem
+    let imagemHtml;
+    if (evento.imagemCapa) {
+        imagemHtml = `<img src="${ApiUtils.getUploadUrl(evento.imagemCapa)}" alt="${escapeHtml(evento.titulo)}" class="featured-image">`;
+    } else {
+        imagemHtml = `<div class="featured-image placeholder-image">🎉</div>`;
+    }
+    
+    featuredContainer.innerHTML = `
+        <div class="featured-card fade-in">
+            <div class="featured-badge">Destaque</div>
+            <div class="featured-content">
+                ${imagemHtml}
+                <div class="featured-info">
+                    <h2 class="featured-title">${escapeHtml(evento.titulo)}</h2>
+                    <p class="featured-description">${escapeHtml(truncatedDescription)}</p>
+                    <div class="featured-meta">
+                        <span class="evento-date">Criado em ${formatDate(evento.dataCriacao)}</span>
+                        <a href="detalhes-evento.html?id=${evento.id}" class="evento-btn">Ver Detalhes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function displayRegularEventos(eventos) {
+    const eventosGrid = document.getElementById('eventos-grid');
     
     eventosGrid.innerHTML = '';
     
@@ -41,22 +107,19 @@ function displayEventos() {
         const eventoCard = createEventoCard(evento);
         eventosGrid.appendChild(eventoCard);
     });
-    
-    eventosGrid.classList.remove('hidden');
-    emptyState.classList.add('hidden');
 }
 
 function createEventoCard(evento) {
     const card = document.createElement('div');
-    card.className = 'evento-card';
+    card.className = 'evento-card fade-in';
     
     const description = evento.descricao || 'Aguarde mais informações sobre este evento em breve.';
-    const truncatedDescription = truncateText(description, 150);
+    const truncatedDescription = truncateText(description, 120);
     
     // Determinar imagem
     let imagemHtml;
     if (evento.imagemCapa) {
-        imagemHtml = `<img src="/uploads/${evento.imagemCapa}" alt="${escapeHtml(evento.titulo)}" class="evento-image">`;
+        imagemHtml = `<img src="${ApiUtils.getUploadUrl(evento.imagemCapa)}" alt="${escapeHtml(evento.titulo)}" class="evento-image">`;
     } else {
         imagemHtml = `<div class="placeholder-image">🎉</div>`;
     }
@@ -66,11 +129,17 @@ function createEventoCard(evento) {
         <div class="evento-content">
             <div class="evento-header">
                 <h3 class="evento-title">${escapeHtml(evento.titulo)}</h3>
-                <span class="evento-date">Criado em ${formatDate(evento.dataCriacao)}</span>
+                <div class="evento-date">Criado em ${formatDate(evento.dataCriacao)}</div>
             </div>
             <p class="evento-description">${escapeHtml(truncatedDescription)}</p>
             <div class="evento-footer">
-                <a href="detalhesEvento.html?id=${evento.id}" class="evento-btn">Ver Detalhes</a>
+                <div class="evento-meta">
+                    <div class="galeria-count">
+                        <span>📸</span>
+                        <span>Galeria disponível</span>
+                    </div>
+                </div>
+                <a href="detalhes-evento.html?id=${evento.id}" class="evento-btn">Ver Detalhes</a>
             </div>
         </div>
     `;
@@ -78,33 +147,72 @@ function createEventoCard(evento) {
     return card;
 }
 
+function applySorting() {
+    const sortValue = document.getElementById('sort-select').value;
+    
+    switch (sortValue) {
+        case 'titulo':
+            filteredEventos.sort((a, b) => a.titulo.localeCompare(b.titulo));
+            break;
+        case 'antigo':
+            filteredEventos.sort((a, b) => new Date(a.dataCriacao) - new Date(b.dataCriacao));
+            break;
+        case 'recente':
+        default:
+            filteredEventos.sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao));
+            break;
+    }
+    
+    if (filteredEventos.length > 0) {
+        displayEventos();
+    }
+}
+
+function updateEventsCount() {
+    const eventsCount = document.getElementById('events-count');
+    const count = filteredEventos.length;
+    
+    eventsCount.textContent = `${count} evento${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
+}
+
 function showLoading(show) {
     const loading = document.getElementById('loading');
-    const eventosGrid = document.getElementById('eventos-grid');
-    const emptyState = document.getElementById('empty-state');
     
     if (show) {
         loading.classList.remove('hidden');
-        eventosGrid.classList.add('hidden');
-        emptyState.classList.add('hidden');
+        hideStates();
+        document.getElementById('filter-bar').classList.add('hidden');
+        document.getElementById('eventos-grid').classList.add('hidden');
+        document.getElementById('featured-evento').classList.add('hidden');
     } else {
         loading.classList.add('hidden');
     }
 }
 
 function showEmptyState() {
-    const emptyState = document.getElementById('empty-state');
-    const eventosGrid = document.getElementById('eventos-grid');
-    
-    emptyState.classList.remove('hidden');
-    eventosGrid.classList.add('hidden');
+    document.getElementById('empty-state').classList.remove('hidden');
+    document.getElementById('eventos-grid').classList.add('hidden');
+    document.getElementById('featured-evento').classList.add('hidden');
+    document.getElementById('filter-bar').classList.add('hidden');
+    document.getElementById('error-state').classList.add('hidden');
+}
+
+function showErrorState() {
+    document.getElementById('error-state').classList.remove('hidden');
+    hideStates();
+    document.getElementById('filter-bar').classList.add('hidden');
+}
+
+function hideStates() {
+    document.getElementById('empty-state').classList.add('hidden');
+    document.getElementById('error-state').classList.add('hidden');
 }
 
 function truncateText(text, maxLength) {
     if (!text || text.length <= maxLength) {
         return text || '';
     }
-    return text.substring(0, maxLength) + '...';
+    return text.substring(0, maxLength).trim() + '...';
 }
 
 function formatDate(dateString) {

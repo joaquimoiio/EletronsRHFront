@@ -4,20 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Vagas - Sistema RH</title>
+    <link href="../css/global.css" rel="stylesheet">
     <link href="../css/vagas.css" rel="stylesheet">
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo">Sistema RH</h1>
+                <h1 class="logo">Sistema RH Admin</h1>
                 <nav class="nav">
                     <a href="dashboard.html" class="nav-link">Dashboard</a>
                     <a href="areas.html" class="nav-link">Áreas</a>
                     <a href="vagas.html" class="nav-link active">Vagas</a>
                     <a href="eventos.html" class="nav-link">Eventos</a>
-                    <button id="logout-btn" class="logout-btn">Sair</button>
                 </nav>
+                <div class="user-menu">
+                    <span class="welcome">Olá, <span id="username">Admin</span>!</span>
+                    <button id="logout-btn" class="logout-btn">Sair</button>
+                </div>
             </div>
         </div>
     </header>
@@ -25,78 +29,190 @@
     <main class="main">
         <div class="container">
             <div class="page-header">
-                <h2>Gerenciar Vagas</h2>
-                <p>Publique e gerencie as vagas de emprego da empresa</p>
+                <h1 class="page-title">Gerenciar Vagas</h1>
+                <p class="page-subtitle">Publique e gerencie as vagas de emprego da empresa</p>
             </div>
 
-            <div id="message" class="message hidden"></div>
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-vagas">0</div>
+                        <div class="stat-label">Total de Vagas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="vagas-ativas">0</div>
+                        <div class="stat-label">Vagas Ativas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-candidatos">0</div>
+                        <div class="stat-label">Total Candidatos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="vagas-contratadas">0</div>
+                        <div class="stat-label">Contratações</div>
+                    </div>
+                </div>
+            </section>
 
-            <!-- Formulário Nova Vaga -->
-            <div class="form-section">
-                <div class="card">
-                    <h3>Nova Vaga</h3>
-                    <form id="vaga-form" class="vaga-form">
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label for="vaga-titulo">Título da Vaga</label>
-                                <input type="text" id="vaga-titulo" name="titulo" required 
-                                       placeholder="Ex: Desenvolvedor Full Stack, Analista de RH...">
+            <div class="content-layout">
+                <!-- Form Section -->
+                <section class="form-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">💼 Nova Vaga</h3>
+                        </div>
+                        
+                        <form id="vaga-form" class="vaga-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="vaga-titulo" class="form-label">Título da Vaga *</label>
+                                    <input type="text" id="vaga-titulo" name="titulo" class="form-input" required 
+                                           placeholder="Ex: Desenvolvedor Full Stack, Analista de RH..."
+                                           maxlength="100">
+                                    <div id="titulo-feedback" class="input-feedback hidden"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="vaga-descricao" class="form-label">Descrição da Vaga</label>
+                                    <textarea id="vaga-descricao" name="descricao" class="form-input form-textarea" 
+                                              rows="6" placeholder="Descreva as responsabilidades, requisitos e benefícios da vaga..."></textarea>
+                                </div>
                             </div>
-                            <div class="input-group">
-                                <label for="vaga-area">Área</label>
-                                <select id="vaga-area" name="areaId" required>
-                                    <option value="">Selecione uma área</option>
-                                </select>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="vaga-area" class="form-label">Área *</label>
+                                    <select id="vaga-area" name="areaId" class="form-input form-select" required>
+                                        <option value="">Selecione uma área</option>
+                                    </select>
+                                    <div id="area-feedback" class="input-feedback hidden"></div>
+                                </div>
+                                
+                                <button type="submit" class="submit-btn">
+                                    <span class="btn-text">🚀 Publicar Vaga</span>
+                                    <span class="btn-loading hidden">Publicando...</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Filters Section -->
+                <section class="filters-section">
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label for="status-filter" class="form-label">Status:</label>
+                            <select id="status-filter" class="form-input form-select">
+                                <option value="">Todos os status</option>
+                                <option value="ATIVA">Ativas</option>
+                                <option value="INATIVA">Inativas</option>
+                                <option value="CONTRATADA">Contratadas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="area-filter" class="form-label">Área:</label>
+                            <select id="area-filter" class="form-input form-select">
+                                <option value="">Todas as áreas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="search-input" class="form-label">Buscar:</label>
+                            <div class="search-group">
+                                <input type="text" id="search-input" class="form-input search-input" 
+                                       placeholder="Digite o título da vaga...">
+                                <button id="search-btn" class="search-btn">🔍 Buscar</button>
                             </div>
                         </div>
                         
-                        <div class="input-group">
-                            <label for="vaga-descricao">Descrição da Vaga</label>
-                            <textarea id="vaga-descricao" name="descricao" rows="6" 
-                                      placeholder="Descreva as responsabilidades, requisitos e benefícios da vaga..."></textarea>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <button id="clear-filters" class="btn btn-secondary">🗑️ Limpar</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Vagas List -->
+                <section class="vagas-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📋 Vagas Publicadas</h3>
+                            <span id="vagas-counter" class="counter">0 vagas</span>
                         </div>
                         
-                        <button type="submit" class="submit-btn">Publicar Vaga</button>
-                    </form>
-                </div>
-            </div>
+                        <div id="results-info" class="results-info hidden">
+                            <span id="results-text">Exibindo todas as vagas</span>
+                        </div>
+                        
+                        <div id="loading" class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Carregando vagas...</p>
+                        </div>
 
-            <!-- Lista de Vagas -->
-            <div class="list-section">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Vagas Publicadas</h3>
-                        <div class="header-actions">
-                            <span id="total-vagas" class="counter">0</span>
-                            <div class="filter-group">
-                                <select id="status-filter">
-                                    <option value="">Todos os status</option>
-                                    <option value="ATIVA">Ativas</option>
-                                    <option value="INATIVA">Inativas</option>
-                                    <option value="CONTRATADA">Contratadas</option>
-                                </select>
-                            </div>
+                        <div id="vagas-list" class="vagas-list hidden">
+                            <!-- Vagas serão carregadas aqui -->
+                        </div>
+
+                        <div id="empty-state" class="empty-state hidden">
+                            <div class="empty-icon">💼</div>
+                            <h3>Nenhuma vaga encontrada</h3>
+                            <p>Comece criando a primeira vaga da empresa</p>
                         </div>
                     </div>
-                    
-                    <div id="loading" class="loading">
-                        Carregando vagas...
-                    </div>
-
-                    <div id="vagas-list" class="vagas-list hidden">
-                        <!-- Vagas serão carregadas aqui -->
-                    </div>
-
-                    <div id="empty-state" class="empty-state hidden">
-                        <p>Nenhuma vaga publicada ainda.</p>
-                        <span>Comece criando a primeira vaga da empresa.</span>
-                    </div>
-                </div>
+                </section>
             </div>
         </div>
     </main>
 
-    <script src="../js/vagas.js"></script>
+    <!-- Modal de Alteração de Status -->
+    <div id="status-modal" class="modal status-modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="status-modal-title">Alterar Status</h3>
+                <button id="close-status-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon" id="status-modal-icon">⚠️</div>
+                <h3 id="status-modal-question">Confirmar ação?</h3>
+                <p id="status-modal-description">Esta ação alterará o status da vaga.</p>
+                <p class="status-warning">Esta ação pode afetar a visibilidade da vaga no site público.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-status" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="confirm-status" class="btn btn-warning">
+                    <span class="btn-text">Confirmar</span>
+                    <span class="btn-loading hidden">Processando...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="delete-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🗑️ Confirmar Exclusão</h3>
+                <button id="close-delete-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir a vaga <strong id="delete-vaga-title"></strong>?</p>
+                <p style="color: #e53e3e; font-size: 0.9rem; margin-top: 1rem;">
+                    ⚠️ Esta ação não pode ser desfeita e todos os candidatos desta vaga serão perdidos.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-delete" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="confirm-delete" class="btn btn-danger">
+                    <span class="btn-text">Excluir Vaga</span>
+                    <span class="btn-loading hidden">Excluindo...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/config.js"></script>
+    <script src="../js/vagas.js"></script>
 </body>
 </html>

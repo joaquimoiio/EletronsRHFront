@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar autenticação
-    checkAuth();
+    if (!checkAuth()) return;
     
     // Configurar eventos
     setupEventListeners();
@@ -8,50 +8,90 @@ document.addEventListener('DOMContentLoaded', function() {
     // Carregar dados iniciais
     loadAreas();
     loadVagas();
+    loadStats();
 });
 
 let areas = [];
-let vagas = [];
+let allVagas = [];
 let filteredVagas = [];
-
-function checkAuth() {
-    if (localStorage.getItem('adminLoggedIn') !== 'true') {
-        window.location.href = 'login.html';
-        return;
-    }
-}
+let vagaToDelete = null;
+let statusAction = null;
 
 function setupEventListeners() {
     // Logout
     document.getElementById('logout-btn').addEventListener('click', handleLogout);
     
+    // Mostrar nome do usuário
+    const username = localStorage.getItem('adminUsername') || 'Admin';
+    document.getElementById('username').textContent = username;
+    
     // Formulário de nova vaga
     document.getElementById('vaga-form').addEventListener('submit', handleCreateVaga);
     
-    // Filtro de status
-    document.getElementById('status-filter').addEventListener('change', applyStatusFilter);
+    // Validação em tempo real
+    document.getElementById('vaga-titulo').addEventListener('input', validateTitulo);
+    document.getElementById('vaga-area').addEventListener('change', validateArea);
+    
+    // Filtros
+    document.getElementById('status-filter').addEventListener('change', applyFilters);
+    document.getElementById('area-filter').addEventListener('change', applyFilters);
+    document.getElementById('search-input').addEventListener('input', debounce(applyFilters, 300));
+    document.getElementById('search-btn').addEventListener('click', applyFilters);
+    document.getElementById('clear-filters').addEventListener('click', clearFilters);
+    
+    // Enter no campo de busca
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyFilters();
+        }
+    });
+    
+    // Modais
+    setupModalEvents();
 }
 
-function handleLogout() {
-    if (confirm('Tem certeza que deseja sair?')) {
-        localStorage.removeItem('adminLoggedIn');
-        localStorage.removeItem('adminUsername');
-        window.location.href = 'login.html';
-    }
+function setupModalEvents() {
+    // Modal de status
+    document.getElementById('close-status-modal').addEventListener('click', closeStatusModal);
+    document.getElementById('cancel-status').addEventListener('click', closeStatusModal);
+    document.getElementById('confirm-status').addEventListener('click', handleStatusConfirm);
+    
+    // Modal de exclusão
+    document.getElementById('close-delete-modal').addEventListener('click', closeDeleteModal);
+    document.getElementById('cancel-delete').addEventListener('click', closeDeleteModal);
+    document.getElementById('confirm-delete').addEventListener('click', handleDeleteVaga);
+    
+    // Fechar modais clicando fora
+    document.getElementById('status-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeStatusModal();
+    });
+    
+    document.getElementById('delete-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
 }
 
 async function loadAreas() {
     try {
         areas = await ApiUtils.get('/areas');
         
-        const select = document.getElementById('vaga-area');
-        select.innerHTML = '<option value="">Selecione uma área</option>';
+        const vagaAreaSelect = document.getElementById('vaga-area');
+        const filterAreaSelect = document.getElementById('area-filter');
+        
+        // Limpar opções existentes
+        vagaAreaSelect.innerHTML = '<option value="">Selecione uma área</option>';
+        filterAreaSelect.innerHTML = '<option value="">Todas as áreas</option>';
         
         areas.forEach(area => {
-            const option = document.createElement('option');
-            option.value = area.id;
-            option.textContent = area.nome;
-            select.appendChild(option);
+            const option1 = document.createElement('option');
+            option1.value = area.id;
+            option1.textContent = area.nome;
+            vagaAreaSelect.appendChild(option1);
+            
+            const option2 = document.createElement('option');
+            option2.value = area.id;
+            option2.textContent = area.nome;
+            filterAreaSelect.appendChild(option2);
         });
         
     } catch (error) {
@@ -63,11 +103,12 @@ async function loadAreas() {
 async function loadVagas() {
     try {
         showLoading(true);
-        vagas = await ApiUtils.get('/vagas');
-        filteredVagas = [...vagas];
+        allVagas = await ApiUtils.get('/vagas');
+        filteredVagas = [...allVagas];
         
         displayVagas();
         updateCounter();
+        updateResultsInfo();
         
     } catch (error) {
         console.error('Erro ao carregar vagas:', error);
@@ -78,35 +119,63 @@ async function loadVagas() {
     }
 }
 
+async function loadStats() {
+    try {
+        const vagas = await ApiUtils.get('/vagas');
+        
+        const ativas = vagas.filter(v => v.status === 'ATIVA').length;
+        const contratadas = vagas.filter(v => v.status === 'CONTRATADA').length;
+        
+        // Calcular total de candidatos
+        const totalCandidatos = vagas.reduce((total, vaga) => {
+            return total + (vaga.candidatos ? vaga.candidatos.length : 0);
+        }, 0);
+        
+        animateCounter('total-vagas', vagas.length);
+        animateCounter('vagas-ativas', ativas);
+        animateCounter('total-candidatos', totalCandidatos);
+        animateCounter('vagas-contratadas', contratadas);
+        
+    } catch (error) {
+        console.error('Erro ao carregar estatísticas:', error);
+    }
+}
+
 function displayVagas() {
     const vagasList = document.getElementById('vagas-list');
     const emptyState = document.getElementById('empty-state');
+    const resultsInfo = document.getElementById('results-info');
     
     if (filteredVagas.length === 0) {
         showEmptyState();
+        resultsInfo.classList.add('hidden');
         return;
     }
     
     vagasList.innerHTML = '';
     
-    filteredVagas.forEach(vaga => {
+    filteredVagas.forEach((vaga, index) => {
         const vagaItem = createVagaItem(vaga);
+        vagaItem.style.animationDelay = `${index * 0.05}s`;
         vagasList.appendChild(vagaItem);
     });
     
     vagasList.classList.remove('hidden');
     emptyState.classList.add('hidden');
+    resultsInfo.classList.remove('hidden');
 }
 
 function createVagaItem(vaga) {
     const div = document.createElement('div');
-    div.className = 'vaga-item';
+    div.className = 'vaga-item fade-in-up';
     
     const area = areas.find(a => a.id === vaga.area.id);
     const areaName = area ? area.nome : vaga.area.nome;
     
     const description = vaga.descricao || 'Sem descrição';
     const truncatedDescription = truncateText(description, 150);
+    
+    const candidatosCount = vaga.candidatos ? vaga.candidatos.length : 0;
     
     div.innerHTML = `
         <div class="vaga-header">
@@ -118,13 +187,15 @@ function createVagaItem(vaga) {
                 <span class="vaga-area">${escapeHtml(areaName)}</span>
                 <span> • Publicada em ${formatDate(vaga.dataCriacao)}</span>
             </div>
-            <span>${vaga.candidatos ? vaga.candidatos.length : 0} candidato(s)</span>
+            <span>${candidatosCount} candidato${candidatosCount !== 1 ? 's' : ''}</span>
         </div>
         <p class="vaga-description">${escapeHtml(truncatedDescription)}</p>
         <div class="vaga-actions">
-            <a href="editarVaga.html?id=${vaga.id}" class="action-btn edit-btn">Editar</a>
+            <a href="editar-vaga.html?id=${vaga.id}" class="action-btn edit-btn">✏️ Editar</a>
             ${createStatusActions(vaga)}
-            <button class="action-btn delete-btn" onclick="deleteVaga(${vaga.id})">Excluir</button>
+            <button class="action-btn delete-btn" onclick="openDeleteModal(${vaga.id}, '${escapeHtml(vaga.titulo)}')">
+                🗑️ Excluir
+            </button>
         </div>
     `;
     
@@ -134,8 +205,18 @@ function createVagaItem(vaga) {
 function createStatusActions(vaga) {
     if (vaga.status === 'ATIVA') {
         return `
-            <button class="action-btn inactivate-btn" onclick="changeVagaStatus(${vaga.id}, 'INATIVA')">Inativar</button>
-            <button class="action-btn contract-btn" onclick="changeVagaStatus(${vaga.id}, 'CONTRATADA')">Contratar</button>
+            <button class="action-btn status-btn" onclick="openStatusModal(${vaga.id}, 'INATIVA')">
+                ⏸️ Inativar
+            </button>
+            <button class="action-btn contract-btn" onclick="openStatusModal(${vaga.id}, 'CONTRATADA')">
+                ✅ Contratar
+            </button>
+        `;
+    } else if (vaga.status === 'INATIVA') {
+        return `
+            <button class="action-btn contract-btn" onclick="openStatusModal(${vaga.id}, 'ATIVA')">
+                ▶️ Ativar
+            </button>
         `;
     }
     return '';
@@ -150,19 +231,6 @@ function getStatusText(status) {
     return statusMap[status] || status;
 }
 
-function applyStatusFilter() {
-    const statusFilter = document.getElementById('status-filter').value;
-    
-    if (!statusFilter) {
-        filteredVagas = [...vagas];
-    } else {
-        filteredVagas = vagas.filter(vaga => vaga.status === statusFilter);
-    }
-    
-    displayVagas();
-    updateCounter();
-}
-
 async function handleCreateVaga(e) {
     e.preventDefault();
     
@@ -170,13 +238,17 @@ async function handleCreateVaga(e) {
     const titulo = formData.get('titulo').trim();
     const areaId = formData.get('areaId');
     const descricao = formData.get('descricao').trim();
+    const submitBtn = e.target.querySelector('.submit-btn');
     
-    if (!titulo || !areaId) {
-        showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+    if (!validateForm()) {
         return;
     }
     
     try {
+        submitBtn.disabled = true;
+        submitBtn.querySelector('.btn-text').classList.add('hidden');
+        submitBtn.querySelector('.btn-loading').classList.remove('hidden');
+        
         const vagaData = {
             titulo: titulo,
             area: { id: parseInt(areaId) },
@@ -184,75 +256,267 @@ async function handleCreateVaga(e) {
         };
         
         const newVaga = await ApiUtils.post('/vagas', vagaData);
-        vagas.unshift(newVaga);
+        allVagas.unshift(newVaga);
         
         showMessage('Vaga publicada com sucesso!', 'success');
         e.target.reset();
-        
-        // Atualizar filtros se necessário
-        applyStatusFilter();
+        clearValidation();
+        applyFilters();
+        loadStats();
         
     } catch (error) {
         console.error('Erro ao criar vaga:', error);
         showMessage(error.message || 'Erro ao publicar vaga. Tente novamente.', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.querySelector('.btn-text').classList.remove('hidden');
+        submitBtn.querySelector('.btn-loading').classList.add('hidden');
     }
 }
 
-async function changeVagaStatus(vagaId, newStatus) {
-    const vaga = vagas.find(v => v.id === vagaId);
+function openStatusModal(vagaId, newStatus) {
+    const vaga = allVagas.find(v => v.id === vagaId);
     if (!vaga) return;
     
-    const statusMessages = {
-        'INATIVA': 'inativar',
-        'CONTRATADA': 'marcar como contratada'
-    };
+    statusAction = { vagaId, newStatus, vaga };
     
-    if (!confirm(`Tem certeza que deseja ${statusMessages[newStatus]} a vaga "${vaga.titulo}"?`)) {
-        return;
+    const modal = document.getElementById('status-modal');
+    const title = document.getElementById('status-modal-title');
+    const icon = document.getElementById('status-modal-icon');
+    const question = document.getElementById('status-modal-question');
+    const description = document.getElementById('status-modal-description');
+    const confirmBtn = document.getElementById('confirm-status');
+    
+    // Configurar modal baseado na ação
+    switch (newStatus) {
+        case 'INATIVA':
+            modal.className = 'modal status-modal inativar';
+            title.textContent = '⏸️ Inativar Vaga';
+            icon.textContent = '⏸️';
+            question.textContent = `Inativar a vaga "${vaga.titulo}"?`;
+            description.textContent = 'A vaga ficará oculta no site público e não receberá novas candidaturas.';
+            confirmBtn.className = 'btn btn-warning';
+            confirmBtn.querySelector('.btn-text').textContent = 'Inativar Vaga';
+            break;
+            
+        case 'ATIVA':
+            modal.className = 'modal status-modal ativar';
+            title.textContent = '▶️ Ativar Vaga';
+            icon.textContent = '▶️';
+            question.textContent = `Ativar a vaga "${vaga.titulo}"?`;
+            description.textContent = 'A vaga ficará visível no site público e receberá candidaturas.';
+            confirmBtn.className = 'btn btn-success';
+            confirmBtn.querySelector('.btn-text').textContent = 'Ativar Vaga';
+            break;
+            
+        case 'CONTRATADA':
+            modal.className = 'modal status-modal contratar';
+            title.textContent = '✅ Marcar como Contratada';
+            icon.textContent = '✅';
+            question.textContent = `Marcar "${vaga.titulo}" como contratada?`;
+            description.textContent = 'A vaga será fechada e não receberá mais candidaturas.';
+            confirmBtn.className = 'btn btn-success';
+            confirmBtn.querySelector('.btn-text').textContent = 'Marcar Contratada';
+            break;
     }
     
+    modal.classList.remove('hidden');
+}
+
+function closeStatusModal() {
+    document.getElementById('status-modal').classList.add('hidden');
+    statusAction = null;
+}
+
+async function handleStatusConfirm() {
+    if (!statusAction) return;
+    
+    const confirmBtn = document.getElementById('confirm-status');
+    
     try {
-        await ApiUtils.patch(`/vagas/${vagaId}/status`, { status: newStatus });
+        confirmBtn.disabled = true;
+        confirmBtn.querySelector('.btn-text').classList.add('hidden');
+        confirmBtn.querySelector('.btn-loading').classList.remove('hidden');
+        
+        await ApiUtils.patch(`/vagas/${statusAction.vagaId}/status`, { 
+            status: statusAction.newStatus 
+        });
         
         // Atualizar vaga local
-        const vagaIndex = vagas.findIndex(v => v.id === vagaId);
+        const vagaIndex = allVagas.findIndex(v => v.id === statusAction.vagaId);
         if (vagaIndex !== -1) {
-            vagas[vagaIndex].status = newStatus;
+            allVagas[vagaIndex].status = statusAction.newStatus;
         }
         
         showMessage('Status da vaga alterado com sucesso!', 'success');
-        applyStatusFilter();
+        closeStatusModal();
+        applyFilters();
+        loadStats();
         
     } catch (error) {
-        console.error('Erro ao alterar status da vaga:', error);
+        console.error('Erro ao alterar status:', error);
         showMessage(error.message || 'Erro ao alterar status. Tente novamente.', 'error');
+    } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.querySelector('.btn-text').classList.remove('hidden');
+        confirmBtn.querySelector('.btn-loading').classList.add('hidden');
     }
 }
 
-async function deleteVaga(vagaId) {
-    const vaga = vagas.find(v => v.id === vagaId);
-    if (!vaga) return;
+function openDeleteModal(vagaId, vagaTitle) {
+    vagaToDelete = vagaId;
+    document.getElementById('delete-vaga-title').textContent = vagaTitle;
+    document.getElementById('delete-modal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+    vagaToDelete = null;
+}
+
+async function handleDeleteVaga() {
+    if (!vagaToDelete) return;
     
-    if (!confirm(`Tem certeza que deseja excluir a vaga "${vaga.titulo}"?\n\nEsta ação não pode ser desfeita.`)) {
-        return;
-    }
+    const confirmBtn = document.getElementById('confirm-delete');
     
     try {
-        await ApiUtils.delete(`/vagas/${vagaId}`);
-        vagas = vagas.filter(v => v.id !== vagaId);
+        confirmBtn.disabled = true;
+        confirmBtn.querySelector('.btn-text').classList.add('hidden');
+        confirmBtn.querySelector('.btn-loading').classList.remove('hidden');
+        
+        await ApiUtils.delete(`/vagas/${vagaToDelete}`);
+        allVagas = allVagas.filter(v => v.id !== vagaToDelete);
         
         showMessage('Vaga excluída com sucesso!', 'success');
-        applyStatusFilter();
+        closeDeleteModal();
+        applyFilters();
+        loadStats();
         
     } catch (error) {
         console.error('Erro ao excluir vaga:', error);
         showMessage(error.message || 'Erro ao excluir vaga. Tente novamente.', 'error');
+    } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.querySelector('.btn-text').classList.remove('hidden');
+        confirmBtn.querySelector('.btn-loading').classList.add('hidden');
     }
 }
 
-function showEmptyState() {
-    document.getElementById('vagas-list').classList.add('hidden');
-    document.getElementById('empty-state').classList.remove('hidden');
+function applyFilters() {
+    const statusFilter = document.getElementById('status-filter').value;
+    const areaFilter = document.getElementById('area-filter').value;
+    const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+    
+    filteredVagas = allVagas.filter(vaga => {
+        const matchesStatus = !statusFilter || vaga.status === statusFilter;
+        const matchesArea = !areaFilter || vaga.area.id.toString() === areaFilter;
+        const matchesSearch = !searchTerm || 
+            vaga.titulo.toLowerCase().includes(searchTerm) ||
+            (vaga.descricao && vaga.descricao.toLowerCase().includes(searchTerm));
+        
+        return matchesStatus && matchesArea && matchesSearch;
+    });
+    
+    displayVagas();
+    updateCounter();
+    updateResultsInfo();
+}
+
+function clearFilters() {
+    document.getElementById('status-filter').value = '';
+    document.getElementById('area-filter').value = '';
+    document.getElementById('search-input').value = '';
+    
+    filteredVagas = [...allVagas];
+    applyFilters();
+}
+
+function updateCounter() {
+    const counter = document.getElementById('vagas-counter');
+    const count = filteredVagas.length;
+    counter.textContent = `${count} vaga${count !== 1 ? 's' : ''}`;
+}
+
+function updateResultsInfo() {
+    const resultsText = document.getElementById('results-text');
+    const count = filteredVagas.length;
+    const total = allVagas.length;
+    
+    if (count === total) {
+        resultsText.textContent = `Exibindo todas as ${count} vaga${count !== 1 ? 's' : ''}`;
+    } else {
+        resultsText.textContent = `Exibindo ${count} de ${total} vaga${total !== 1 ? 's' : ''}`;
+    }
+}
+
+function validateForm() {
+    const tituloValid = validateTitulo();
+    const areaValid = validateArea();
+    
+    return tituloValid && areaValid;
+}
+
+function validateTitulo() {
+    const input = document.getElementById('vaga-titulo');
+    const feedback = document.getElementById('titulo-feedback');
+    const value = input.value.trim();
+    
+    if (!value) {
+        showValidationError(input, feedback, 'Título da vaga é obrigatório');
+        return false;
+    }
+    
+    if (value.length < 3) {
+        showValidationError(input, feedback, 'Título deve ter pelo menos 3 caracteres');
+        return false;
+    }
+    
+    showValidationSuccess(input, feedback, 'Título válido');
+    return true;
+}
+
+function validateArea() {
+    const input = document.getElementById('vaga-area');
+    const feedback = document.getElementById('area-feedback');
+    const value = input.value;
+    
+    if (!value) {
+        showValidationError(input, feedback, 'Área é obrigatória');
+        return false;
+    }
+    
+    showValidationSuccess(input, feedback, 'Área selecionada');
+    return true;
+}
+
+function showValidationError(input, feedback, message) {
+    input.classList.remove('success');
+    input.classList.add('error');
+    feedback.classList.remove('success', 'hidden');
+    feedback.classList.add('error');
+    feedback.textContent = message;
+}
+
+function showValidationSuccess(input, feedback, message) {
+    input.classList.remove('error');
+    input.classList.add('success');
+    feedback.classList.remove('error', 'hidden');
+    feedback.classList.add('success');
+    feedback.textContent = message;
+}
+
+function clearValidation() {
+    const inputs = ['vaga-titulo', 'vaga-area'];
+    inputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        const feedback = document.getElementById(inputId.replace('vaga-', '') + '-feedback');
+        
+        input.classList.remove('error', 'success');
+        if (feedback) {
+            feedback.classList.add('hidden');
+            feedback.classList.remove('error', 'success');
+        }
+    });
 }
 
 function showLoading(show) {
@@ -264,39 +528,33 @@ function showLoading(show) {
     }
 }
 
-function updateCounter() {
-    document.getElementById('total-vagas').textContent = filteredVagas.length;
-}
-
-function showMessage(text, type) {
-    const message = document.getElementById('message');
-    message.textContent = text;
-    message.className = `message ${type}`;
-    message.classList.remove('hidden');
-    
-    setTimeout(() => {
-        message.classList.add('hidden');
-    }, 5000);
+function showEmptyState() {
+    document.getElementById('vagas-list').classList.add('hidden');
+    document.getElementById('empty-state').classList.remove('hidden');
 }
 
 function truncateText(text, maxLength) {
     if (!text || text.length <= maxLength) {
         return text || '';
     }
-    return text.substring(0, maxLength) + '...';
+    return text.substring(0, maxLength).trim() + '...';
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text || '';
-    return div.innerHTML;
+function animateCounter(elementId, targetValue) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    let currentValue = 0;
+    const increment = Math.max(1, Math.ceil(targetValue / 20));
+    const duration = 1500;
+    const stepTime = duration / (targetValue / increment);
+    
+    const timer = setInterval(() => {
+        currentValue += increment;
+        if (currentValue >= targetValue) {
+            currentValue = targetValue;
+            clearInterval(timer);
+        }
+        element.textContent = currentValue;
+    }, stepTime);
 }

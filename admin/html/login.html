@@ -10,6 +10,7 @@
     <div class="login-wrapper">
         <div class="login-container">
             <div class="login-header">
+                <div class="login-icon">🔐</div>
                 <h1>Área Administrativa</h1>
                 <p>Faça login para acessar o sistema</p>
             </div>
@@ -21,16 +22,32 @@
             <form id="login-form" class="login-form">
                 <div class="input-group">
                     <label for="username">Usuário</label>
-                    <input type="text" id="username" name="username" required>
+                    <div class="input-icon">👤</div>
+                    <input type="text" id="username" name="username" required 
+                           placeholder="Digite seu usuário" autocomplete="username">
                 </div>
                 
                 <div class="input-group">
                     <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" required>
+                    <div class="input-icon">🔒</div>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="Digite sua senha" autocomplete="current-password">
                 </div>
                 
-                <button type="submit" class="login-btn">Entrar</button>
-                <a href="../../publico/html/index.html" class="back-link">Voltar ao site</a>
+                <button type="submit" class="login-btn">
+                    <span class="btn-text">Entrar no Sistema</span>
+                    <span class="btn-loading">Entrando...</span>
+                </button>
+                
+                <div class="forgot-password">
+                    <a href="#" onclick="alert('Entre em contato com o administrador do sistema.')">
+                        Esqueceu sua senha?
+                    </a>
+                </div>
+                
+                <a href="../../publico/html/index.html" class="back-link">
+                    ← Voltar ao site público
+                </a>
             </form>
         </div>
     </div>

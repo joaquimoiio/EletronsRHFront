@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Evento - Sistema RH</title>
+    <link href="../css/global.css" rel="stylesheet">
+    <link href="../css/detalhes-evento.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Sistema RH</h1>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Início</a>
+                    <a href="vagas.html" class="nav-link">Vagas</a>
+                    <a href="eventos.html" class="nav-link">Eventos</a>
+                    <a href="../../admin/html/login.html" class="nav-link">Admin</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Breadcrumb -->
+        <section class="breadcrumb">
+            <div class="container">
+                <nav class="breadcrumb-nav">
+                    <a href="eventos.html">Eventos</a>
+                    <span class="breadcrumb-separator">›</span>
+                    <span id="breadcrumb-title">Carregando...</span>
+                </nav>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading-section" class="loading-section">
+            <div class="container">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Carregando detalhes do evento...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div id="evento-content" class="hidden">
+            <!-- Evento Header -->
+            <section class="evento-header">
+                <div class="container">
+                    <div class="evento-title-section">
+                        <h1 id="evento-title" class="evento-title">Carregando...</h1>
+                        <div class="evento-meta">
+                            <span id="evento-date">Criado em: Carregando...</span>
+                        </div>
+                        
+                        <div class="evento-capa-container">
+                            <img id="evento-capa" class="evento-capa hidden" src="" alt="Imagem do evento">
+                            <div id="placeholder-capa" class="placeholder-capa">🎉</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Section -->
+            <section class="content-section">
+                <div class="container">
+                    <div class="content-grid">
+                        <!-- Description -->
+                        <div class="evento-description slide-up">
+                            <div class="description-header">
+                                <h2>Sobre o Evento</h2>
+                            </div>
+                            <div id="evento-description" class="description-content">
+                                Carregando descrição...
+                            </div>
+                        </div>
+
+                        <!-- Sidebar -->
+                        <div class="sidebar">
+                            <!-- Evento Info -->
+                            <div class="evento-info slide-up">
+                                <div class="info-header">
+                                    <h3>Informações</h3>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="info-label">Data de Criação:</span>
+                                    <span id="info-date" class="info-value">-</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="info-label">Galeria:</span>
+                                    <span id="info-imagens" class="info-value">- fotos</span>
+                                </div>
+                            </div>
+
+                            <!-- Galeria -->
+                            <div class="galeria-section slide-up">
+                                <div class="galeria-header">
+                                    <h3>Galeria de Fotos</h3>
+                                </div>
+                                
+                                <div id="galeria-loading" class="loading" style="padding: 2rem;">
+                                    <div class="loading-spinner" style="width: 30px; height: 30px;"></div>
+                                    <p style="margin-top: 1rem; font-size: 0.9rem;">Carregando galeria...</p>
+                                </div>
+                                
+                                <div id="galeria-grid" class="galeria-grid hidden">
+                                    <!-- Imagens serão carregadas aqui -->
+                                </div>
+
+                                <div id="empty-galeria" class="empty-galeria hidden">
+                                    <p>Nenhuma foto disponível para este evento.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-section" class="error-section hidden">
+            <div class="container">
+                <div class="error-content">
+                    <div class="error-icon">❌</div>
+                    <h2>Evento não encontrado</h2>
+                    <p>O evento que você está procurando não foi encontrado ou não está mais disponível.</p>
+                    <a href="eventos.html" class="btn btn-primary">Ver Outros Eventos</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sistema RH. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal para visualizar imagens -->
+    <div id="image-modal" class="modal hidden">
+        <div class="modal-content">
+            <img id="modal-image" class="modal-image" src="" alt="Imagem do evento">
+            <div class="modal-controls">
+                <button id="prev-image" class="modal-nav">‹ Anterior</button>
+                <span id="modal-counter" class="modal-counter">1 / 1</span>
+                <button id="next-image" class="modal-nav">Próxima ›</button>
+                <button id="close-modal" class="close-modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/detalhes-evento.js"></script>
+</body>
+</html>
