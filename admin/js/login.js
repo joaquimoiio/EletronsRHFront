@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Verificar se já está logado
     if (localStorage.getItem('adminLoggedIn') === 'true') {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'areas.html';
         return;
     }
 
