@@ -17,6 +17,7 @@ let filteredVagas = [];
 let vagaToDelete = null;
 let statusAction = null;
 let candidatosModalVaga = null;
+let candidatoParaChamar = null;
 
 function setupEventListeners() {
     // Logout
@@ -65,6 +66,9 @@ function setupModalEvents() {
     // Modal de candidatos
     document.getElementById('close-candidatos-modal').addEventListener('click', closeCandidatosModal);
     document.getElementById('search-candidatos').addEventListener('input', debounce(searchCandidatos, 300));
+    
+    // Filtro de status de candidatos
+    document.getElementById('status-candidatos-filter').addEventListener('change', searchCandidatos);
     
     // Fechar modais clicando fora
     document.getElementById('status-modal').addEventListener('click', function(e) {
@@ -135,7 +139,7 @@ async function loadStats() {
         const ativas = vagas.filter(v => v.status === 'ATIVA').length;
         const contratadas = vagas.filter(v => v.status === 'CONTRATADA').length;
         
-        // Calcular total de candidatos usando a nova estrutura de resposta DTO
+        // Usar os novos contadores do DTO
         const totalCandidatos = vagas.reduce((total, vaga) => {
             return total + (vaga.candidatosCount || 0);
         }, 0);
@@ -185,6 +189,7 @@ function createVagaItem(vaga) {
     const truncatedDescription = truncateText(description, 150);
     
     const candidatosCount = vaga.candidatosCount || 0;
+    const candidatosChamadosCount = vaga.candidatosChamadosCount || 0;
     
     div.innerHTML = `
         <div class="vaga-header">
@@ -196,13 +201,16 @@ function createVagaItem(vaga) {
                 <span class="vaga-area">${escapeHtml(areaName)}</span>
                 <span> • Publicada em ${formatDate(vaga.dataCriacao)}</span>
             </div>
-            <span>${candidatosCount} candidato${candidatosCount !== 1 ? 's' : ''}</span>
+            <div class="candidatos-stats">
+                <span>${candidatosCount} candidato${candidatosCount !== 1 ? 's' : ''}</span>
+                <span class="candidatos-chamados"> • ${candidatosChamadosCount} chamado${candidatosChamadosCount !== 1 ? 's' : ''}</span>
+            </div>
         </div>
         <p class="vaga-description">${escapeHtml(truncatedDescription)}</p>
         <div class="vaga-actions">
             <a href="editar-vaga.html?id=${vaga.id}" class="action-btn edit-btn">✏️ Editar</a>
             <button class="action-btn candidatos-btn" onclick="openCandidatosModal(${vaga.id}, '${escapeHtml(vaga.titulo)}')">
-                👥 Candidatos (${candidatosCount})
+                👥 Candidatos (${candidatosCount}/${candidatosChamadosCount})
             </button>
             ${createStatusActions(vaga)}
             <button class="action-btn delete-btn" onclick="openDeleteModal(${vaga.id}, '${escapeHtml(vaga.titulo)}')">
@@ -248,6 +256,7 @@ async function openCandidatosModal(vagaId, vagaTitle) {
     document.getElementById('candidatos-modal-title').textContent = `Candidatos - ${vagaTitle}`;
     document.getElementById('candidatos-modal').classList.remove('hidden');
     document.getElementById('search-candidatos').value = '';
+    document.getElementById('status-candidatos-filter').value = '';
     
     await loadCandidatos(vagaId);
 }
@@ -257,14 +266,18 @@ function closeCandidatosModal() {
     candidatosModalVaga = null;
 }
 
-async function loadCandidatos(vagaId, filtro = '') {
+async function loadCandidatos(vagaId, filtro = '', status = '') {
     try {
         document.getElementById('candidatos-loading').classList.remove('hidden');
         document.getElementById('candidatos-list').classList.add('hidden');
         document.getElementById('candidatos-empty').classList.add('hidden');
         
-        const params = filtro ? `?filtro=${encodeURIComponent(filtro)}` : '';
-        const candidatos = await ApiUtils.get(`/vagas/${vagaId}/candidatos${params}`);
+        let params = [];
+        if (filtro) params.push(`filtro=${encodeURIComponent(filtro)}`);
+        if (status) params.push(`status=${encodeURIComponent(status)}`);
+        
+        const queryString = params.length > 0 ? `?${params.join('&')}` : '';
+        const candidatos = await ApiUtils.get(`/vagas/${vagaId}/candidatos${queryString}`);
         
         displayCandidatos(candidatos);
         
@@ -302,32 +315,142 @@ function createCandidatoItem(candidato) {
     div.className = 'candidato-item';
     
     const dataInscricao = formatDate(candidato.dataInscricao);
+    const dataChamada = candidato.dataChamada ? formatDate(candidato.dataChamada) : null;
     const temCurriculo = candidato.caminhoCurriculo ? true : false;
+    
+    const statusClass = getStatusClass(candidato.status);
+    const statusText = getStatusText(candidato.status);
+    
+    const statusActions = createStatusActions(candidato);
     
     div.innerHTML = `
         <div class="candidato-header">
             <h5 class="candidato-nome">${escapeHtml(candidato.nome)}</h5>
-            <span class="candidato-data">${dataInscricao}</span>
+            <div class="candidato-status">
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </div>
         </div>
         <div class="candidato-info">
-            <span class="candidato-email">${escapeHtml(candidato.email)}</span>
-            ${temCurriculo ? 
-                `<a href="${ApiUtils.getUploadUrl(candidato.caminhoCurriculo)}" target="_blank" class="curriculo-link">📄 Ver Currículo</a>` : 
-                '<span class="no-curriculo">📄 Sem currículo</span>'
-            }
+            <div class="candidato-dados">
+                <span class="candidato-email">${escapeHtml(candidato.email)}</span>
+                <div class="candidato-datas">
+                    <span class="data-inscricao">Inscrito em: ${dataInscricao}</span>
+                    ${dataChamada ? `<span class="data-chamada">Chamado em: ${dataChamada}</span>` : ''}
+                </div>
+            </div>
+            <div class="candidato-acoes">
+                ${temCurriculo ? 
+                    `<a href="${ApiUtils.getUploadUrl(candidato.caminhoCurriculo)}" target="_blank" class="curriculo-link">📄 Ver Currículo</a>` : 
+                    '<span class="no-curriculo">📄 Sem currículo</span>'
+                }
+                ${statusActions}
+            </div>
         </div>
     `;
     
     return div;
 }
 
+function getStatusClass(status) {
+    const statusClasses = {
+        'INSCRITO': 'status-inscrito',
+        'CHAMADO': 'status-chamado',
+        'REJEITADO': 'status-rejeitado'
+    };
+    return statusClasses[status] || 'status-inscrito';
+}
+
+function getStatusText(status) {
+    const statusTexts = {
+        'INSCRITO': 'Inscrito',
+        'CHAMADO': 'Chamado',
+        'REJEITADO': 'Rejeitado'
+    };
+    return statusTexts[status] || status;
+}
+
+function createStatusActions(candidato) {
+    if (candidato.status === 'INSCRITO') {
+        return `
+            <button class="action-btn chamar-btn" onclick="chamarCandidato(${candidato.id})">
+                📞 Chamar para Entrevista
+            </button>
+        `;
+    } else if (candidato.status === 'CHAMADO') {
+        return `
+            <button class="action-btn rejeitar-btn" onclick="alterarStatusCandidato(${candidato.id}, 'REJEITADO')">
+                ❌ Rejeitar
+            </button>
+        `;
+    }
+    return '';
+}
+
+async function chamarCandidato(candidatoId) {
+    if (!confirm('Tem certeza que deseja chamar este candidato para entrevista?')) {
+        return;
+    }
+    
+    try {
+        await ApiUtils.patch(`/candidatos/${candidatoId}/chamar`, {});
+        showMessage('Candidato chamado para entrevista com sucesso!', 'success');
+        
+        // Recarregar lista de candidatos
+        if (candidatosModalVaga) {
+            const filtro = document.getElementById('search-candidatos').value;
+            const status = document.getElementById('status-candidatos-filter').value;
+            await loadCandidatos(candidatosModalVaga, filtro, status);
+        }
+        
+        // Recarregar vagas para atualizar contadores
+        loadVagas();
+        loadStats();
+        
+    } catch (error) {
+        console.error('Erro ao chamar candidato:', error);
+        showMessage(error.message || 'Erro ao chamar candidato. Tente novamente.', 'error');
+    }
+}
+
+async function alterarStatusCandidato(candidatoId, novoStatus) {
+    const confirmMessage = novoStatus === 'REJEITADO' ? 
+        'Tem certeza que deseja rejeitar este candidato?' :
+        `Tem certeza que deseja alterar o status deste candidato para ${novoStatus}?`;
+        
+    if (!confirm(confirmMessage)) {
+        return;
+    }
+    
+    try {
+        await ApiUtils.patch(`/candidatos/${candidatoId}/status`, { status: novoStatus });
+        showMessage('Status do candidato alterado com sucesso!', 'success');
+        
+        // Recarregar lista de candidatos
+        if (candidatosModalVaga) {
+            const filtro = document.getElementById('search-candidatos').value;
+            const status = document.getElementById('status-candidatos-filter').value;
+            await loadCandidatos(candidatosModalVaga, filtro, status);
+        }
+        
+        // Recarregar vagas para atualizar contadores
+        loadVagas();
+        loadStats();
+        
+    } catch (error) {
+        console.error('Erro ao alterar status do candidato:', error);
+        showMessage(error.message || 'Erro ao alterar status. Tente novamente.', 'error');
+    }
+}
+
 async function searchCandidatos() {
     if (!candidatosModalVaga) return;
     
     const filtro = document.getElementById('search-candidatos').value.trim();
-    await loadCandidatos(candidatosModalVaga, filtro);
+    const status = document.getElementById('status-candidatos-filter').value;
+    await loadCandidatos(candidatosModalVaga, filtro, status);
 }
 
+// Resto do código permanece igual...
 async function handleCreateVaga(e) {
     e.preventDefault();
     
@@ -371,6 +494,7 @@ async function handleCreateVaga(e) {
     }
 }
 
+// ... continuar com o resto das funções que já existem
 function openStatusModal(vagaId, newStatus) {
     const vaga = allVagas.find(v => v.id === vagaId);
     if (!vaga) return;

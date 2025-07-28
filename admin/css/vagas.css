@@ -169,6 +169,17 @@
     font-weight: bold;
 }
 
+.candidatos-stats {
+    display: flex;
+    gap: 5px;
+    font-size: 13px;
+}
+
+.candidatos-chamados {
+    color: #27ae60;
+    font-weight: bold;
+}
+
 .vaga-description {
     color: #666;
     margin-bottom: 10px;
@@ -312,16 +323,27 @@
 
 /* Modal de Candidatos */
 .candidatos-modal-content {
-    max-width: 800px;
+    max-width: 900px;
     width: 90%;
 }
 
-.candidatos-search {
-    margin-bottom: 15px;
+.candidatos-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.candidatos-search input,
+.candidatos-status-filter select {
+    width: 100%;
 }
 
 .candidatos-list {
-    max-height: 400px;
+    max-height: 500px;
     overflow-y: auto;
     border: 1px solid #e2e8f0;
     border-radius: 4px;
@@ -345,7 +367,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .candidato-nome {
@@ -355,21 +377,70 @@
     font-weight: bold;
 }
 
-.candidato-data {
-    color: #666;
-    font-size: 14px;
+.candidato-status {
+    display: flex;
+    align-items: center;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+.status-inscrito {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-chamado {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status-rejeitado {
+    background: #ffebee;
+    color: #c62828;
 }
 
 .candidato-info {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 15px;
+}
+
+.candidato-dados {
+    flex: 1;
 }
 
 .candidato-email {
     color: #666;
     font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.candidato-datas {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: #888;
+}
+
+.data-chamada {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.candidato-acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
 }
 
 .curriculo-link {
@@ -381,6 +452,7 @@
     font-size: 12px;
     font-weight: normal;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .curriculo-link:hover {
@@ -393,6 +465,24 @@
     color: #adb5bd;
     font-size: 12px;
     font-style: italic;
+}
+
+.chamar-btn {
+    background: #27ae60;
+    color: white;
+}
+
+.chamar-btn:hover {
+    background: #229954;
+}
+
+.rejeitar-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.rejeitar-btn:hover {
+    background: #c0392b;
 }
 
 .empty-candidatos {
@@ -491,6 +581,23 @@
     color: #666;
 }
 
+/* Animações */
+.fade-in-up {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .vaga-form {
@@ -505,6 +612,11 @@
     
     .search-group {
         grid-column: 1 / -1;
+    }
+    
+    .candidatos-filters {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 }
 
@@ -531,6 +643,10 @@
         gap: 8px;
     }
     
+    .candidatos-stats {
+        align-self: flex-start;
+    }
+    
     .vaga-actions {
         flex-direction: column;
         width: 100%;
@@ -551,6 +667,13 @@
         align-items: flex-start;
         gap: 8px;
     }
+    
+    .candidato-acoes {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 480px) {
@@ -569,5 +692,10 @@
     .candidatos-modal-content {
         margin: 15px;
         width: calc(100% - 30px);
+    }
+    
+    .candidato-acoes {
+        flex-direction: column;
+        align-items: stretch;
     }
 }

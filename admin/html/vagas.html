@@ -173,9 +173,19 @@
                 <button id="close-candidatos-modal" class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="candidatos-search">
-                    <input type="text" id="search-candidatos" class="form-input" 
-                           placeholder="Buscar candidato por nome...">
+                <div class="candidatos-filters">
+                    <div class="candidatos-search">
+                        <input type="text" id="search-candidatos" class="form-input" 
+                               placeholder="Buscar candidato por nome...">
+                    </div>
+                    <div class="candidatos-status-filter">
+                        <select id="status-candidatos-filter" class="form-input form-select">
+                            <option value="">Todos os status</option>
+                            <option value="INSCRITO">Inscritos</option>
+                            <option value="CHAMADO">Chamados</option>
+                            <option value="REJEITADO">Rejeitados</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div id="candidatos-loading" class="loading">
