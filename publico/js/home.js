@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     
     // Carregar dados
-    loadStats();
     loadAreas();
     
     // Adicionar animações de entrada
@@ -87,27 +86,6 @@ function setupEventListeners() {
             }
         }
     });
-}
-
-async function loadStats() {
-    try {
-        // Carregar estatísticas da API
-        const stats = await ApiUtils.get('/estatisticas');
-        
-        // Animar contadores
-        animateCounter('vagas-count', stats.vagasAtivas || 0);
-        animateCounter('areas-count', stats.totalAreas || 0);
-        animateCounter('eventos-count', stats.totalEventos || 0);
-        animateCounter('candidatos-count', stats.totalCandidatos || 0);
-        
-    } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error);
-        // Usar valores padrão em caso de erro
-        animateCounter('vagas-count', 5);
-        animateCounter('areas-count', 3);
-        animateCounter('eventos-count', 2);
-        animateCounter('candidatos-count', 25);
-    }
 }
 
 async function loadAreas() {
