@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Forçar ocultação do modal no carregamento
+    const notifyModal = document.getElementById('notify-modal');
+    if (notifyModal) {
+        notifyModal.style.display = 'none';
+        notifyModal.classList.add('hidden');
+    }
+    
     // Configurar eventos
     setupEventListeners();
     
@@ -11,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setupEventListeners() {
+    console.log('Configurando event listeners...');
+    
     // Modal de notificação
     const notifyBtn = document.getElementById('notify-btn');
     const notifyModal = document.getElementById('notify-modal');
@@ -18,22 +27,64 @@ function setupEventListeners() {
     const cancelNotify = document.getElementById('cancel-notify');
     const notifyForm = document.getElementById('notify-form');
 
-    notifyBtn.addEventListener('click', openNotifyModal);
-    closeModal.addEventListener('click', closeNotifyModal);
-    cancelNotify.addEventListener('click', closeNotifyModal);
-    notifyForm.addEventListener('submit', handleNotifySubmit);
+    // Verificar se os elementos existem
+    console.log('Elementos encontrados:', {
+        notifyBtn: !!notifyBtn,
+        notifyModal: !!notifyModal,
+        closeModal: !!closeModal,
+        cancelNotify: !!cancelNotify,
+        notifyForm: !!notifyForm
+    });
+
+    if (notifyBtn) {
+        notifyBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Botão de notificação clicado');
+            openNotifyModal();
+        });
+    }
+    
+    if (closeModal) {
+        closeModal.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Botão X clicado');
+            closeNotifyModal();
+        });
+    }
+    
+    if (cancelNotify) {
+        cancelNotify.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Botão cancelar clicado');
+            closeNotifyModal();
+        });
+    }
+    
+    if (notifyForm) {
+        notifyForm.addEventListener('submit', handleNotifySubmit);
+    }
     
     // Fechar modal clicando fora
-    notifyModal.addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeNotifyModal();
-        }
-    });
+    if (notifyModal) {
+        notifyModal.addEventListener('click', function(e) {
+            if (e.target === notifyModal) {
+                console.log('Clique fora do modal');
+                closeNotifyModal();
+            }
+        });
+    }
 
     // Fechar modal com ESC
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !notifyModal.classList.contains('hidden')) {
-            closeNotifyModal();
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('notify-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                console.log('ESC pressionado');
+                closeNotifyModal();
+            }
         }
     });
 }
@@ -64,6 +115,8 @@ async function loadAreas() {
         const areas = await ApiUtils.get('/areas');
         
         const select = document.getElementById('notify-area');
+        if (!select) return;
+        
         // Limpar opções existentes (exceto a primeira)
         while (select.children.length > 1) {
             select.removeChild(select.lastChild);
@@ -101,43 +154,71 @@ function animateCounter(elementId, targetValue) {
 }
 
 function openNotifyModal() {
+    console.log('Abrindo modal...');
     const modal = document.getElementById('notify-modal');
+    if (!modal) {
+        console.error('Modal não encontrado!');
+        return;
+    }
+    
+    // Usar tanto display quanto classe para garantir visibilidade
+    modal.style.display = 'flex';
     modal.classList.remove('hidden');
     
-    // Focar no campo de e-mail
+    console.log('Modal aberto, classes:', modal.className);
+    
+    // Focar no campo de e-mail após um pequeno delay
     setTimeout(() => {
-        document.getElementById('notify-email').focus();
+        const emailInput = document.getElementById('notify-email');
+        if (emailInput) {
+            emailInput.focus();
+        }
     }, 100);
 }
 
 function closeNotifyModal() {
+    console.log('Fechando modal...');
     const modal = document.getElementById('notify-modal');
+    if (!modal) {
+        console.error('Modal não encontrado!');
+        return;
+    }
+    
+    // Usar tanto display quanto classe para garantir ocultação
+    modal.style.display = 'none';
     modal.classList.add('hidden');
     
+    console.log('Modal fechado, classes:', modal.className);
+    
     // Limpar formulário
-    document.getElementById('notify-form').reset();
+    const form = document.getElementById('notify-form');
+    if (form) {
+        form.reset();
+    }
 }
 
 async function handleNotifySubmit(e) {
     e.preventDefault();
     
     const formData = new FormData(e.target);
-    const email = formData.get('email').trim();
+    const email = formData.get('email');
     const areaId = formData.get('area');
     
-    if (!email) {
+    // Validar email
+    if (!email || !email.trim()) {
         showMessage('Por favor, informe seu e-mail.', 'error');
         return;
     }
     
-    if (!validateEmail(email)) {
+    const emailTrimmed = email.trim();
+    if (!validateEmail(emailTrimmed)) {
         showMessage('Por favor, informe um e-mail válido.', 'error');
         return;
     }
     
     try {
         const data = {
-            email: email,
+            email: emailTrimmed,
             areaId: areaId || null
         };
         
@@ -158,14 +239,41 @@ function validateEmail(email) {
 }
 
 function showMessage(text, type) {
+    // Remover mensagens existentes
+    const existingMessages = document.querySelectorAll('.temp-message');
+    existingMessages.forEach(msg => msg.remove());
+    
     // Criar elemento de mensagem
     const message = document.createElement('div');
-    message.className = `message ${type}`;
+    message.className = `message ${type} temp-message`;
     message.textContent = text;
+    message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        max-width: 500px;
+        text-align: center;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    `;
     
-    // Inserir no topo da página
-    const main = document.querySelector('main');
-    main.insertBefore(message, main.firstChild);
+    // Aplicar cores baseadas no tipo
+    if (type === 'success') {
+        message.style.backgroundColor = '#c6f6d5';
+        message.style.color = '#22543d';
+        message.style.border = '1px solid #9ae6b4';
+    } else if (type === 'error') {
+        message.style.backgroundColor = '#fed7d7';
+        message.style.color = '#c53030';
+        message.style.border = '1px solid #feb2b2';
+    }
+    
+    // Inserir no body
+    document.body.appendChild(message);
     
     // Remover após 5 segundos
     setTimeout(() => {
@@ -177,6 +285,15 @@ function showMessage(text, type) {
 
 function addScrollAnimations() {
     const animateElements = document.querySelectorAll('.animate-in');
+    
+    if (!window.IntersectionObserver) {
+        // Fallback para navegadores antigos
+        animateElements.forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        });
+        return;
+    }
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {

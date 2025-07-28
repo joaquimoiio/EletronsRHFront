@@ -13,7 +13,19 @@ const ApiUtils = {
             if (!response.ok) {
                 throw new Error(`Erro ${response.status}: ${response.statusText}`);
             }
-            return await response.json();
+            
+            // Verificar se há conteúdo para fazer parse
+            const text = await response.text();
+            if (!text.trim()) {
+                return null; // Resposta vazia
+            }
+            
+            try {
+                return JSON.parse(text);
+            } catch (parseError) {
+                console.error('Erro ao fazer parse do JSON:', text);
+                throw new Error('Resposta inválida do servidor');
+            }
         } catch (error) {
             console.error(`Erro ao buscar ${endpoint}:`, error);
             throw error;
@@ -32,11 +44,31 @@ const ApiUtils = {
             });
             
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || `Erro ${response.status}`);
+                // Tentar ler o texto de erro
+                let errorMessage;
+                try {
+                    const errorText = await response.text();
+                    errorMessage = errorText || `Erro ${response.status}: ${response.statusText}`;
+                } catch {
+                    errorMessage = `Erro ${response.status}: ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
             }
             
-            return await response.json();
+            // Verificar se há conteúdo para fazer parse
+            const text = await response.text();
+            if (!text.trim()) {
+                // Resposta vazia indica sucesso para alguns endpoints
+                return { success: true, message: 'Operação realizada com sucesso' };
+            }
+            
+            try {
+                return JSON.parse(text);
+            } catch (parseError) {
+                // Se não conseguir fazer parse mas a resposta foi 200, considerar sucesso
+                console.warn('Resposta não é JSON válido, mas status OK:', text);
+                return { success: true, message: 'Operação realizada com sucesso' };
+            }
         } catch (error) {
             console.error(`Erro ao enviar para ${endpoint}:`, error);
             throw error;
@@ -52,11 +84,29 @@ const ApiUtils = {
             });
             
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || `Erro ${response.status}`);
+                let errorMessage;
+                try {
+                    const errorText = await response.text();
+                    errorMessage = errorText || `Erro ${response.status}: ${response.statusText}`;
+                } catch {
+                    errorMessage = `Erro ${response.status}: ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
             }
             
-            return await response.json();
+            // Verificar se há conteúdo para fazer parse
+            const text = await response.text();
+            if (!text.trim()) {
+                return { success: true, message: 'Upload realizado com sucesso' };
+            }
+            
+            try {
+                return JSON.parse(text);
+            } catch (parseError) {
+                // Se não conseguir fazer parse mas a resposta foi 200, considerar sucesso
+                console.warn('Resposta não é JSON válido, mas status OK:', text);
+                return { success: true, message: 'Upload realizado com sucesso' };
+            }
         } catch (error) {
             console.error(`Erro ao enviar formulário para ${endpoint}:`, error);
             throw error;
