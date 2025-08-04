@@ -3,43 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eletrons</title>
+    <title>Eletrons - Materiais Elétricos e Instalações</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header class="header" id="header">
         <div class="container"> 
             <div class="header-content">
                 <div class="logo">
                     <img src="https://eletronsmateriaiseletricos.com.br/wp-content/uploads/2018/11/logo-eletrons.png" alt="Eletrons Materiais Elétricos" class="logo-img">
                 </div>
-                <nav class="nav">
+                <nav class="nav" id="nav">
                     <a href="#inicio" class="nav-link active">Início</a>
                     <a href="#sobre" class="nav-link">A Empresa</a>
                     <a href="/publico/html/index.html" class="nav-link">RH</a>
                     <a href="#servicos" class="nav-link">Serviços</a>
                     <a href="#contato" class="nav-link">Contato</a>
                 </nav>
-                <div class="mobile-menu-toggle">
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
                     <span></span>
                     <span></span>
                     <span></span>
-                </div>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
     <section id="inicio" class="hero">
-        <div class="hero-overlay"></div>
         <div class="container">
             <div class="hero-content">
-                <h1>Faça Parte da Nossa Equipe</h1>
-                <p class="hero-subtitle">Há mais de 30 anos no mercado, a Eletrons é referência em materiais elétricos e instalações em Santa Catarina. Junte-se a uma empresa sólida, inovadora e em constante crescimento.</p>
-                <div class="hero-buttons">
-                    <a href="/publico/html/vagas.html" class="btn btn-primary">Ver Vagas Abertas</a>
-                    <a href="#sobre" class="btn btn-secondary">Conheça a Empresa</a>
+                <div class="hero-text">
+                    <h1>Faça Parte da Nossa Equipe</h1>
+                    <p class="hero-subtitle">
+                        Há mais de 30 anos no mercado, a Eletrons é referência em materiais elétricos e instalações em Santa Catarina. 
+                        Construa sua carreira em uma empresa sólida e em crescimento.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="/publico/html/vagas.html" class="btn btn-primary">Ver Vagas Abertas</a>
+                        <a href="#sobre" class="btn btn-outline">Conheça a Empresa</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="hero-stats-card">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-number">30+</span>
+                                <span class="stat-label">Anos de Mercado</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">1000+</span>
+                                <span class="stat-label">Clientes Atendidos</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">50+</span>
+                                <span class="stat-label">Colaboradores</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">7</span>
+                                <span class="stat-label">Cooperativas</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -59,37 +88,25 @@
                     
                     <p>Visando atender as necessidades na área de materiais elétricos em geral, disponibilizamos uma ampla linha de produtos e soluções, para baixa e média tensão, instalação elétrica residencial, predial e industrial, como também na linha de kit postes padrão Celesc e Cooperativas.</p>
 
-                    <div class="values">
-                        <div class="value-item">
+                    <div class="company-values">
+                        <div class="value-card">
                             <h4>Missão</h4>
                             <p>Facilitar e fornecer produtos e serviços de qualidade, visando o acesso aos benefícios e soluções da energia elétrica.</p>
                         </div>
-                        <div class="value-item">
+                        <div class="value-card">
                             <h4>Visão</h4>
                             <p>Ser reconhecida na região sul de Santa Catarina como uma empresa de produtos e serviços qualificados e certificados no setor elétrico.</p>
                         </div>
-                        <div class="value-item">
+                        <div class="value-card">
                             <h4>Valores</h4>
                             <p>Compromisso, Excelência, Profissionalismo e Respeito.</p>
                         </div>
                     </div>
                 </div>
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">30+</div>
-                        <div class="stat-label">Anos de Mercado</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">1000+</div>
-                        <div class="stat-label">Clientes Atendidos</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Colaboradores</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">7</div>
-                        <div class="stat-label">Cooperativas Homologadas</div>
+                <div class="about-image">
+                    <div class="image-placeholder">
+                        <span>🏢</span>
+                        <p>Nossa sede em Tubarão-SC</p>
                     </div>
                 </div>
             </div>
@@ -110,7 +127,7 @@
                     <p>Ampla linha de produtos para baixa e média tensão, instalações residenciais, prediais e industriais.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">🏗️</div>
+                    <div class="service-icon">🔌</div>
                     <h3>Kit Postes</h3>
                     <p>Fabricação própria com rigoroso padrão de qualidade, homologados pela CELESC e Cooperativas.</p>
                 </div>
@@ -120,7 +137,7 @@
                     <p>Projetos, montagens e manutenções com profissionais qualificados e experiência comprovada.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">🛡️</div>
+                    <div class="service-icon">⚡</div>
                     <h3>Linha Viva</h3>
                     <p>Serviços especializados em linha viva com todas as normas de segurança e qualidade.</p>
                 </div>
@@ -180,28 +197,28 @@
             </div>
             <div class="contact-content">
                 <div class="contact-info">
-                    <div class="contact-item">
+                    <div class="contact-card">
                         <div class="contact-icon">📍</div>
                         <div class="contact-details">
                             <h4>Endereço</h4>
                             <p>Centro, Tubarão - SC<br>Brasil</p>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-card">
                         <div class="contact-icon">📞</div>
                         <div class="contact-details">
                             <h4>Telefone</h4>
-                            <p>(48) 3622-0000</p>
+                            <p>(48) 3626-5170</p>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-card">
                         <div class="contact-icon">✉️</div>
                         <div class="contact-details">
                             <h4>E-mail</h4>
                             <p>contato@eletronsmateriaiseletricos.com.br</p>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-card">
                         <div class="contact-icon">🕒</div>
                         <div class="contact-details">
                             <h4>Horário de Funcionamento</h4>
@@ -209,13 +226,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <input type="text" id="name" name="name" required placeholder="Seu nome">
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" required placeholder="Seu e-mail">
+                <div class="contact-form-container">
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" required placeholder="Seu nome">
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" name="email" required placeholder="Seu e-mail">
+                            </div>
                         </div>
                         <div class="form-group">
                             <input type="tel" id="phone" name="phone" placeholder="Seu telefone">
@@ -223,7 +242,7 @@
                         <div class="form-group">
                             <textarea id="message" name="message" required placeholder="Sua mensagem" rows="5"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                        <button type="submit" class="btn btn-primary btn-block">Enviar Mensagem</button>
                     </form>
                 </div>
             </div>
@@ -239,28 +258,31 @@
                     <p>Há mais de 30 anos oferecendo soluções completas em materiais elétricos e instalações em Santa Catarina.</p>
                 </div>
                 <div class="footer-section">
-                    <h4>Central de Recursos</h4>
+                    <h4>Links Úteis</h4>
                     <ul>
                         <li><a href="#inicio">Início</a></li>
-                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScqy5_2ktA3DMqL7H8IskZfBM3h7J3Hjtd0LL-RMlheyBhs_Q/viewform?usp=sharing&ouid=114335988420096733082">Canal de Denúncias</a></li>
-                        <li><a href="/publico/html/index.html">RH</a></li>
+                        <li><a href="#sobre">A Empresa</a></li>
+                        <li><a href="/publico/html/index.html">Portal RH</a></li>
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScqy5_2ktA3DMqL7H8IskZfBM3h7J3Hjtd0LL-RMlheyBhs_Q/viewform">Canal de Denúncias</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>Serviços</h4>
                     <ul>
                         <li>Materiais Elétricos</li>
-                        <li>Kit Postes</li>
+                        <li>Kit Postes Padrão</li>
                         <li>Instalações Elétricas</li>
-                        <li>Manutenção</li>
-                        <li>Linha Viva</li>
+                        <li>Manutenção Preventiva</li>
+                        <li>Serviços em Linha Viva</li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>Contato</h4>
-                    <p>📍 Centro, Tubarão - SC</p>
-                    <p>📞 (48) 3626-5170</p>
-                    <p>✉️ contato@eletronsmateriaiseletricos.com.br</p>
+                    <div class="footer-contact">
+                        <p>📍 Centro, Tubarão - SC</p>
+                        <p>📞 (48) 3626-5170</p>
+                        <p>✉️ contato@eletronsmateriaiseletricos.com.br</p>
+                    </div>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -269,6 +291,6 @@
         </div>
     </footer>
 
-    <script src="js/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
