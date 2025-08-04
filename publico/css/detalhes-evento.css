@@ -1,11 +1,4 @@
-/* CSS para a nova página de detalhes do evento */
-
-/* Reset e base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* Estilos específicos da página de detalhes da vaga */
 
 /* Breadcrumb */
 .breadcrumb {
@@ -20,7 +13,7 @@
 }
 
 .breadcrumb-nav a {
-    color: #9b59b6;
+    color: #3498db;
     text-decoration: none;
 }
 
@@ -33,92 +26,86 @@
     color: #adb5bd;
 }
 
-/* Evento Header */
-.evento-header {
-    background: #9b59b6;
+/* Page Header */
+.vaga-header {
+    background: #3498db;
     color: white;
-    padding: 40px 0;
-    text-align: center;
+    padding: 30px 0;
 }
 
-.evento-title-section h1 {
-    font-size: 32px;
+.vaga-title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.title-content {
+    flex: 1;
+}
+
+.vaga-title {
+    font-size: 28px;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     line-height: 1.2;
 }
 
-.evento-meta {
+.vaga-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
     font-size: 16px;
     opacity: 0.95;
-    margin-bottom: 30px;
 }
 
-.evento-capa-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
+.area-badge {
+    background: #ffd700;
+    color: #2c3e50;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.evento-capa {
-    max-width: 600px;
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
-
-.placeholder-capa {
-    max-width: 600px;
-    width: 100%;
-    height: 300px;
-    background: rgba(255,255,255,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255,255,255,0.7);
-    font-size: 80px;
-    border-radius: 8px;
-    border: 2px dashed rgba(255,255,255,0.3);
-}
-
-/* Content Section */
+/* Content Grid */
 .content-section {
-    padding: 40px 0;
-    background: #f8f9fa;
+    padding: 30px 0;
 }
 
-/* Descrição do Evento */
-.evento-description-section {
-    margin-bottom: 50px;
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
 }
 
-.description-card {
+/* Vaga Description */
+.vaga-description {
     background: white;
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     border: 1px solid #e2e8f0;
-    margin-bottom: 30px;
 }
 
 .description-header {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #9b59b6;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .description-header h2 {
     color: #2c3e50;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
     margin: 0;
 }
 
 .description-content {
     color: #666;
-    line-height: 1.8;
+    line-height: 1.7;
     font-size: 16px;
 }
 
@@ -130,258 +117,172 @@
     margin-bottom: 0;
 }
 
-/* Galeria Section */
-.galeria-section {
-    background: white;
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border: 1px solid #e2e8f0;
+.description-content ul,
+.description-content ol {
+    margin: 15px 0;
+    padding-left: 20px;
 }
 
-.section-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #9b59b6;
+.description-content li {
+    margin-bottom: 8px;
 }
 
-.section-header h2 {
-    color: #2c3e50;
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.section-header p {
-    color: #666;
-    font-size: 16px;
-}
-
-/* Grid de Fotos */
-.fotos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-}
-
-/* Foto Card - Simplificado sem informações extras */
-.foto-card {
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.foto-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-.foto-image-container {
-    position: relative;
-    height: 200px;
-    overflow: hidden;
-}
-
-.foto-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.foto-card:hover .foto-image {
-    transform: scale(1.05);
-}
-
-.foto-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.foto-card:hover .foto-overlay {
-    opacity: 1;
-}
-
-.foto-expand-btn {
-    background: #9b59b6;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.foto-expand-btn:hover {
-    background: #8e44ad;
-    transform: scale(1.05);
-}
-
-/* Empty State */
-.empty-galeria {
-    text-align: center;
-    padding: 80px 20px;
-    color: #666;
-}
-
-.empty-icon {
-    font-size: 64px;
-    margin-bottom: 20px;
-    opacity: 0.5;
-}
-
-.empty-galeria h3 {
-    font-size: 24px;
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-weight: 600;
-}
-
-.empty-galeria p {
-    font-size: 16px;
-    line-height: 1.6;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-/* Modal da Foto */
-.photo-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.photo-modal.hidden {
-    display: none !important;
-}
-
-.modal-backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    cursor: pointer;
-}
-
-.photo-modal .modal-content {
-    position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    z-index: 10000;
-}
-
-.modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 20px;
-    z-index: 10001;
-    transition: background 0.3s ease;
-}
-
-.modal-close:hover {
-    background: rgba(0, 0, 0, 0.9);
-}
-
-.modal-photo {
-    width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
-    display: block;
-}
-
-.modal-info {
-    padding: 20px;
-    text-align: center;
-    background: white;
-}
-
-.photo-name {
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 16px;
-}
-
-/* Loading State */
-.loading-section {
-    padding: 80px 0;
-    text-align: center;
-}
-
-.loading-content {
+/* Sidebar */
+.sidebar {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
 }
 
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #e2e8f0;
-    border-top: 4px solid #9b59b6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+/* Candidatura Card */
+.candidatura-card {
+    background: white;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #27ae60;
+}
+
+.candidatura-header {
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.loading-text {
+.candidatura-header h3 {
+    color: #2c3e50;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.candidatura-header p {
     color: #666;
+    font-size: 14px;
+}
+
+.candidatura-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.file-input {
+    padding: 8px;
+}
+
+.file-help {
+    margin-top: 5px;
+    color: #888;
+    font-size: 12px;
+}
+
+.submit-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #229954;
+    transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-loading {
+    display: none;
+}
+
+.submit-btn:disabled .btn-text {
+    display: none;
+}
+
+.submit-btn:disabled .btn-loading {
+    display: inline;
+}
+
+/* Vaga Info Card */
+.vaga-info {
+    background: white;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.info-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-header h4 {
+    color: #2c3e50;
     font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.info-label {
+    color: #666;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.info-value {
+    color: #2c3e50;
+    font-weight: normal;
+    text-align: right;
+}
+
+.status-badge {
+    background: #d4edda;
+    color: #155724;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: normal;
+    text-transform: uppercase;
 }
 
 /* Error State */
 .error-section {
-    padding: 80px 0;
+    padding: 40px 0;
     text-align: center;
 }
 
 .error-content {
     max-width: 500px;
     margin: 0 auto;
-    background: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .error-icon {
-    font-size: 64px;
+    font-size: 48px;
     margin-bottom: 20px;
     opacity: 0.6;
 }
@@ -390,196 +291,117 @@
     color: #2c3e50;
     font-size: 24px;
     margin-bottom: 15px;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 .error-content p {
     color: #666;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     line-height: 1.6;
     font-size: 16px;
 }
 
-/* Animations */
-.fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease-out forwards;
+/* Success Animation */
+.success-animation {
+    animation: successPulse 0.6s ease-out;
 }
 
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Loading State */
+.loading-section {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    color: #666;
+    font-size: 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Responsivo */
-@media (max-width: 1200px) {
-    .fotos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
         gap: 20px;
+    }
+    
+    .sidebar {
+        order: -1;
     }
 }
 
 @media (max-width: 768px) {
-    .evento-header {
-        padding: 30px 0;
-    }
-    
-    .evento-title-section h1 {
-        font-size: 28px;
-    }
-    
-    .evento-capa,
-    .placeholder-capa {
-        height: 200px;
-    }
-    
-    .placeholder-capa {
-        font-size: 60px;
-    }
-    
-    .content-section {
-        padding: 30px 0;
-    }
-    
-    .description-card,
-    .galeria-section {
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .section-header h2 {
-        font-size: 24px;
-    }
-    
-    .fotos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    .vaga-title-section {
+        flex-direction: column;
         gap: 15px;
     }
     
-    .foto-image-container {
-        height: 150px;
-    }
-}
-
-@media (max-width: 480px) {
-    .evento-header {
-        padding: 20px 0;
-    }
-    
-    .evento-title-section h1 {
+    .vaga-title {
         font-size: 24px;
     }
     
-    .evento-capa,
-    .placeholder-capa {
-        height: 160px;
+    .vaga-meta {
+        flex-direction: column;
+        gap: 10px;
     }
     
-    .placeholder-capa {
-        font-size: 48px;
-    }
-    
-    .description-card,
-    .galeria-section {
+    .vaga-description,
+    .candidatura-card,
+    .vaga-info {
         padding: 15px;
     }
     
-    .section-header {
-        margin-bottom: 30px;
-    }
-    
-    .section-header h2 {
+    .description-header h2 {
         font-size: 20px;
     }
     
-    .fotos-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .foto-image-container {
-        height: 180px;
-    }
-    
-    .modal-photo {
-        max-height: 70vh;
-    }
-    
-    .photo-modal {
-        padding: 10px;
-    }
-    
-    .modal-close {
-        top: 10px;
-        right: 10px;
-        width: 35px;
-        height: 35px;
+    .candidatura-header h3 {
         font-size: 18px;
     }
 }
 
-/* Melhorias visuais */
-.foto-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #9b59b6, #8e44ad);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.foto-card:hover::before {
-    opacity: 1;
-}
-
-/* Scrollbar customizado */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #9b59b6;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #8e44ad;
-}
-
-/* Estados de foco para acessibilidade */
-.foto-expand-btn:focus,
-.modal-close:focus {
-    outline: 2px solid #9b59b6;
-    outline-offset: 2px;
-}
-
-/* Transition suave para todos os botões */
-button {
-    transition: all 0.3s ease;
-}
-
-/* Loading placeholder para imagens */
-.foto-image[src=""] {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s infinite;
-}
-
-@keyframes skeleton-loading {
-    0% { 
-        background-position: 200% 0; 
+@media (max-width: 480px) {
+    .vaga-header {
+        padding: 20px 0;
     }
-    100% { 
-        background-position: -200% 0; 
+    
+    .vaga-title {
+        font-size: 20px;
+    }
+    
+    .content-section {
+        padding: 20px 0;
+    }
+    
+    .vaga-description,
+    .candidatura-card,
+    .vaga-info {
+        padding: 15px;
     }
 }

@@ -1,407 +1,264 @@
-/* Estilos específicos da página de detalhes da vaga */
+/* Estilos específicos da página home */
 
-/* Breadcrumb */
-.breadcrumb {
-    background: #f8f9fa;
-    padding: 15px 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.breadcrumb-nav {
-    font-size: 14px;
-    color: #666;
-}
-
-.breadcrumb-nav a {
-    color: #3498db;
-    text-decoration: none;
-}
-
-.breadcrumb-nav a:hover {
-    text-decoration: underline;
-}
-
-.breadcrumb-separator {
-    margin: 0 8px;
-    color: #adb5bd;
-}
-
-/* Page Header */
-.vaga-header {
+/* Hero Section */
+.hero {
     background: #3498db;
     color: white;
-    padding: 30px 0;
+    padding: 60px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.vaga-title-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
+.hero-content {
+    position: relative;
+    z-index: 2;
 }
 
-.title-content {
-    flex: 1;
-}
-
-.vaga-title {
-    font-size: 28px;
+.hero h1 {
+    font-size: 36px;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     line-height: 1.2;
 }
 
-.vaga-meta {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    font-size: 16px;
+.hero p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
     opacity: 0.95;
 }
 
-.area-badge {
-    background: #ffd700;
-    color: #2c3e50;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Content Grid */
-.content-section {
-    padding: 30px 0;
-}
-
-.content-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 30px;
-}
-
-/* Vaga Description */
-.vaga-description {
-    background: white;
-    border-radius: 4px;
-    padding: 25px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid #e2e8f0;
-}
-
-.description-header {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.description-header h2 {
-    color: #2c3e50;
-    font-size: 22px;
-    font-weight: bold;
-    margin: 0;
-}
-
-.description-content {
-    color: #666;
-    line-height: 1.7;
-    font-size: 16px;
-}
-
-.description-content p {
-    margin-bottom: 15px;
-}
-
-.description-content p:last-child {
-    margin-bottom: 0;
-}
-
-.description-content ul,
-.description-content ol {
-    margin: 15px 0;
-    padding-left: 20px;
-}
-
-.description-content li {
-    margin-bottom: 8px;
-}
-
-/* Sidebar */
-.sidebar {
+.hero-actions {
     display: flex;
-    flex-direction: column;
     gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-/* Candidatura Card */
-.candidatura-card {
-    background: white;
-    border-radius: 4px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid #e2e8f0;
-    border-top: 4px solid #27ae60;
-}
-
-.candidatura-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.candidatura-header h3 {
-    color: #2c3e50;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.candidatura-header p {
-    color: #666;
-    font-size: 14px;
-}
-
-.candidatura-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.file-input {
-    padding: 8px;
-}
-
-.file-help {
-    margin-top: 5px;
-    color: #888;
-    font-size: 12px;
-}
-
-.submit-btn {
-    background: #27ae60;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
+.hero .btn {
+    padding: 15px 30px;
     font-size: 16px;
-    font-weight: normal;
-    cursor: pointer;
+    min-width: 180px;
+}
+
+/* Features Section */
+.features {
+    padding: 50px 0;
+    background: white;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 32px;
+    color: #2c3e50;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 30px 20px;
+    background: #f8f9fa;
+    border-radius: 4px;
     transition: all 0.3s ease;
-    position: relative;
+    border: 1px solid transparent;
 }
 
-.submit-btn:hover:not(:disabled) {
-    background: #229954;
-    transform: translateY(-1px);
+.feature-card:hover {
+    transform: translateY(-4px);
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-.submit-btn:disabled {
-    background: #95a5a6;
-    cursor: not-allowed;
-    transform: none;
+.feature-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
 }
 
-.btn-loading {
-    display: none;
+.feature-card h3 {
+    font-size: 20px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: bold;
 }
 
-.submit-btn:disabled .btn-text {
-    display: none;
+.feature-card p {
+    color: #666;
+    line-height: 1.6;
 }
 
-.submit-btn:disabled .btn-loading {
-    display: inline;
+/* CTA Section */
+.cta {
+    padding: 50px 0;
+    background: #ecf0f1;
+    text-align: center;
 }
 
-/* Vaga Info Card */
-.vaga-info {
+.cta h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.cta p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
     background: white;
     border-radius: 4px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid #e2e8f0;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
 }
 
-.info-header {
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.info-header h4 {
-    color: #2c3e50;
-    font-size: 18px;
-    font-weight: bold;
-    margin: 0;
-}
-
-.info-item {
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f8f9fa;
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-.info-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.info-label {
-    color: #666;
-    font-weight: normal;
-    font-size: 14px;
-}
-
-.info-value {
+.modal-header h3 {
     color: #2c3e50;
-    font-weight: normal;
-    text-align: right;
-}
-
-.status-badge {
-    background: #d4edda;
-    color: #155724;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: normal;
-    text-transform: uppercase;
-}
-
-/* Error State */
-.error-section {
-    padding: 40px 0;
-    text-align: center;
-}
-
-.error-content {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.error-icon {
-    font-size: 48px;
-    margin-bottom: 20px;
-    opacity: 0.6;
-}
-
-.error-content h2 {
-    color: #2c3e50;
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 20px;
     font-weight: bold;
+    margin: 0;
 }
 
-.error-content p {
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
     color: #666;
-    margin-bottom: 20px;
-    line-height: 1.6;
-    font-size: 16px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
-/* Success Animation */
-.success-animation {
-    animation: successPulse 0.6s ease-out;
+.close-btn:hover {
+    background: #f8f9fa;
 }
 
-@keyframes successPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
+.modal-body {
+    padding: 20px;
 }
 
-/* Loading State */
-.loading-section {
-    padding: 40px 0;
-    text-align: center;
-}
-
-.loading-content {
+.modal-actions {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 15px;
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
 }
 
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #e2e8f0;
-    border-top: 3px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+.modal-actions .btn {
+    flex: 1;
 }
 
-.loading-text {
-    color: #666;
-    font-size: 16px;
+/* Animações */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.animate-in {
+    animation: slideInUp 0.6s ease-out;
 }
 
 /* Responsivo */
-@media (max-width: 1024px) {
-    .content-grid {
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 28px;
+    }
+    
+    .hero p {
+        font-size: 16px;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .features h2 {
+        font-size: 24px;
+    }
+    
+    .features-grid {
         grid-template-columns: 1fr;
         gap: 20px;
     }
     
-    .sidebar {
-        order: -1;
-    }
-}
-
-@media (max-width: 768px) {
-    .vaga-title-section {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .vaga-title {
+    .cta h2 {
         font-size: 24px;
     }
     
-    .vaga-meta {
+    .modal-content {
+        margin: 20px;
+        width: calc(100% - 40px);
+    }
+    
+    .modal-actions {
         flex-direction: column;
-        gap: 10px;
-    }
-    
-    .vaga-description,
-    .candidatura-card,
-    .vaga-info {
-        padding: 15px;
-    }
-    
-    .description-header h2 {
-        font-size: 20px;
-    }
-    
-    .candidatura-header h3 {
-        font-size: 18px;
     }
 }
 
 @media (max-width: 480px) {
-    .vaga-header {
-        padding: 20px 0;
+    .hero {
+        padding: 40px 0;
     }
     
-    .vaga-title {
-        font-size: 20px;
+    .hero h1 {
+        font-size: 24px;
     }
     
-    .content-section {
-        padding: 20px 0;
+    .features {
+        padding: 30px 0;
     }
     
-    .vaga-description,
-    .candidatura-card,
-    .vaga-info {
-        padding: 15px;
+    .cta {
+        padding: 30px 0;
     }
 }
