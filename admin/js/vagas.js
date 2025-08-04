@@ -332,7 +332,8 @@ function createCandidatoItem(candidato) {
         </div>
         <div class="candidato-info">
             <div class="candidato-dados">
-                <span class="candidato-email">${escapeHtml(candidato.email)}</span>
+                <span class="candidato-email">📧 ${escapeHtml(candidato.email)}</span>
+                ${candidato.telefone ? `<span class="candidato-telefone">📞 ${escapeHtml(candidato.telefone)}</span>` : ''}
                 <div class="candidato-datas">
                     <span class="data-inscricao">Inscrito em: ${dataInscricao}</span>
                     ${dataChamada ? `<span class="data-chamada">Chamado em: ${dataChamada}</span>` : ''}

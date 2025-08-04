@@ -699,3 +699,86 @@
         align-items: stretch;
     }
 }
+
+/* Adicionar estas regras ao arquivo admin/css/vagas.css */
+
+.candidato-email,
+.candidato-telefone {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.candidato-telefone {
+    margin-bottom: 8px;
+}
+
+.candidato-dados {
+    flex: 1;
+}
+
+.candidato-dados span {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.candidato-dados .candidato-datas {
+    margin-top: 8px;
+}
+
+/* Melhorar layout do candidato item */
+.candidato-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.candidato-acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+    min-width: 150px;
+}
+
+/* Responsivo para dispositivos móveis */
+@media (max-width: 768px) {
+    .candidato-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .candidato-dados {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    
+    .candidato-email,
+    .candidato-telefone {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+    
+    .candidato-acoes {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        justify-content: flex-start;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .candidato-acoes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .action-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

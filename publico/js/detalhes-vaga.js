@@ -31,9 +31,14 @@ function setupEventListeners() {
     // Validação em tempo real dos campos
     const nomeInput = document.getElementById('candidato-nome');
     const emailInput = document.getElementById('candidato-email');
+    const telefoneInput = document.getElementById('candidato-telefone');
     
     nomeInput.addEventListener('blur', validateNome);
     emailInput.addEventListener('blur', validateEmail);
+    telefoneInput.addEventListener('blur', validateTelefone);
+    
+    // Máscara para telefone
+    telefoneInput.addEventListener('input', formatTelefone);
 }
 
 async function loadVagaDetails(vagaId) {
@@ -94,10 +99,11 @@ async function handleCandidaturaSubmit(e) {
     const formData = new FormData(e.target);
     const nome = formData.get('nome').trim();
     const email = formData.get('email').trim();
+    const telefone = formData.get('telefone').trim();
     const curriculo = formData.get('curriculo');
     
     // Validações
-    if (!validateForm(nome, email, curriculo)) {
+    if (!validateForm(nome, email, telefone, curriculo)) {
         return;
     }
     
@@ -112,6 +118,7 @@ async function handleCandidaturaSubmit(e) {
         const candidaturaData = new FormData();
         candidaturaData.append('nome', nome);
         candidaturaData.append('email', email);
+        candidaturaData.append('telefone', telefone);
         candidaturaData.append('curriculo', curriculo);
         candidaturaData.append('vagaId', vagaId);
         
@@ -135,7 +142,7 @@ async function handleCandidaturaSubmit(e) {
     }
 }
 
-function validateForm(nome, email, curriculo) {
+function validateForm(nome, email, telefone, curriculo) {
     if (!nome) {
         showErrorMessage('Por favor, informe seu nome completo.');
         document.getElementById('candidato-nome').focus();
@@ -157,6 +164,18 @@ function validateForm(nome, email, curriculo) {
     if (!isValidEmail(email)) {
         showErrorMessage('Por favor, informe um e-mail válido.');
         document.getElementById('candidato-email').focus();
+        return false;
+    }
+    
+    if (!telefone) {
+        showErrorMessage('Por favor, informe seu telefone.');
+        document.getElementById('candidato-telefone').focus();
+        return false;
+    }
+    
+    if (!isValidTelefone(telefone)) {
+        showErrorMessage('Por favor, informe um telefone válido.');
+        document.getElementById('candidato-telefone').focus();
         return false;
     }
     
@@ -187,6 +206,19 @@ function validateEmail() {
     const input = document.getElementById('candidato-email');
     
     if (email && !isValidEmail(email)) {
+        input.style.borderColor = '#e53e3e';
+        return false;
+    } else {
+        input.style.borderColor = '#e2e8f0';
+        return true;
+    }
+}
+
+function validateTelefone() {
+    const telefone = document.getElementById('candidato-telefone').value.trim();
+    const input = document.getElementById('candidato-telefone');
+    
+    if (telefone && !isValidTelefone(telefone)) {
         input.style.borderColor = '#e53e3e';
         return false;
     } else {
@@ -227,6 +259,28 @@ function validateFile(e) {
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+}
+
+function isValidTelefone(telefone) {
+    // Remove todos os caracteres não numéricos
+    const numbersOnly = telefone.replace(/\D/g, '');
+    
+    // Verifica se tem 10 ou 11 dígitos (com DDD)
+    return numbersOnly.length >= 10 && numbersOnly.length <= 11;
+}
+
+function formatTelefone(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+    
+    if (value.length <= 10) {
+        // Formato: (XX) XXXX-XXXX
+        value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else {
+        // Formato: (XX) XXXXX-XXXX
+        value = value.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+    }
+    
+    e.target.value = value;
 }
 
 function showSuccessMessage(text) {
